@@ -20,6 +20,7 @@ This repository uses a standardized development container configuration for team
 - **Project Scaffolding**: create-t3-app, create-next-app, create-remix, degit, plop
 - **Version Control**: git, gh (GitHub CLI), git-delta
 - **Shell**: zsh with powerline10k theme, fzf integration
+- **Usage Monitoring**: ccusage (for Claude Code usage tracking and reporting)
 - **Network**: iptables-based firewall restricting external access
 
 ### VSCode Extensions (Auto-installed)
@@ -57,6 +58,9 @@ The development environment includes a firewall configuration that:
 - `npm run test` - Run tests
 - `npm run lint` - Check code quality
 - `npm run format` - Format code with Prettier
+- `npm run usage` - Check Claude Code usage statistics
+- `npm run usage:report` - Generate detailed Claude Code usage report
+- `npm run usage:monitor` - Start monitoring Claude Code usage
 - `npm run docker:up` - Start local services (PostgreSQL, Redis, etc.)
 - `npm run docker:down` - Stop local services
 

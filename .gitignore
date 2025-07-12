@@ -109,3 +109,6 @@ test-results/
 
 # Docker
 .dockerignore
+
+# Claude Code settings
+.claude/settings.local.json

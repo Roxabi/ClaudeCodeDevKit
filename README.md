@@ -34,6 +34,19 @@ A standardized development container setup for team collaboration using Claude C
    # Ctrl+Shift+P (Cmd+Shift+P on Mac) -> "Claude Code: Start Session"
    ```
 
+## TODO
+
+- [ ] Set up package.json with actual project dependencies
+- [ ] Implement development scripts (dev, build, test, lint, format)
+- [ ] Configure TypeScript with proper tsconfig.json
+- [ ] Set up ESLint and Prettier configurations
+- [ ] Create actual project structure and source files
+- [ ] Add test framework setup (Jest, Vitest, etc.)
+- [ ] Configure build process and bundling
+- [ ] Set up CI/CD pipeline
+- [ ] Add project-specific environment variables to .env.example
+- [ ] Create project documentation and usage examples
+
 ## What's Included
 
 ### Development Tools

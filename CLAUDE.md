@@ -7,12 +7,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This repository uses a standardized development container configuration for team consistency.
 
 ### Container Setup
+
 - **Base**: Node.js 20 container with comprehensive development tooling
 - **User**: `node` (non-root for security)
 - **Workspace**: `/workspace` (mounted from host)
 - **Config**: `/home/node/.claude` (persistent across container rebuilds)
 
 ### Available Tools
+
 - **Package Managers**: npm, pnpm
 - **Node.js Tools**: tsx, ts-node-dev
 - **Project Scaffolding**: create-t3-app, create-next-app, create-remix, degit, plop
@@ -21,6 +23,7 @@ This repository uses a standardized development container configuration for team
 - **Network**: iptables-based firewall restricting external access
 
 ### VSCode Extensions (Auto-installed)
+
 - ESLint + Prettier (auto-format on save)
 - GitLens, Git Graph
 - TypeScript auto-import and ES7 React snippets
@@ -30,13 +33,16 @@ This repository uses a standardized development container configuration for team
 - SQL Tools for database work
 
 ### Network Security
+
 The development environment includes a firewall configuration that:
+
 - Allows access to GitHub, npm registry, Anthropic API
 - Blocks most other external network access
 - Permits local network communication
 - Configured via `/usr/local/bin/init-firewall.sh`
 
 ### Environment Variables
+
 - `NODE_OPTIONS`: "--max-old-space-size=4096" (increased memory limit)
 - `CLAUDE_CONFIG_DIR`: "/home/node/.claude"
 - `DEVCONTAINER`: "true" (indicates container environment)
@@ -44,6 +50,7 @@ The development environment includes a firewall configuration that:
 ## Development Workflow
 
 ### Common Commands
+
 - `npm run setup` - Install dependencies, format, and lint code
 - `npm run dev` - Start development server
 - `npm run build` - Build for production
@@ -54,6 +61,7 @@ The development environment includes a firewall configuration that:
 - `npm run docker:down` - Stop local services
 
 ### Container Management
+
 1. **Container Rebuild**: Use "Rebuild Container" in VSCode when devcontainer changes
 2. **Persistent Data**: Bash history and Claude config are preserved via Docker volumes
 3. **Timezone**: Container inherits host timezone via `TZ` environment variable

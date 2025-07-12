@@ -24,7 +24,5 @@
     "gruntfuggly.todo-tree",
     "anthropic.claude-code"
   ],
-  "unwantedRecommendations": [
-    "ms-vscode.vscode-typescript"
-  ]
+  "unwantedRecommendations": ["ms-vscode.vscode-typescript"]
 }

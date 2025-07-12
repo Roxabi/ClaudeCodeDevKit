@@ -21,7 +21,7 @@
     "Stop": [
       {
         "matcher": "tools == '*'",
-        "hooks": [{ "type": "command", "command": "npm run usage:report" }]
+        "hooks": [{ "type": "command", "command": "npm run ccusage" }]
       }
     ]
   }

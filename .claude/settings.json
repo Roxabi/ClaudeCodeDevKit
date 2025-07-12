@@ -1,0 +1,27 @@
+{
+  "hooks": [
+    {
+      "name": "auto-format-on-changes",
+      "type": "PostToolUse",
+      "matchers": ["Edit", "Write"],
+      "command": "npm run format"
+    },
+    {
+      "name": "run-tests-after-code-changes",
+      "type": "PostToolUse",
+      "matchers": ["Edit", "Write"],
+      "command": "npm test -- --passWithNoTests"
+    },
+    {
+      "name": "log-tool-usage",
+      "type": "PostToolUse",
+      "matchers": ["*"],
+      "command": "mkdir -p ~/.claude/logs && echo \"$(date -u +%Y-%m-%dT%H:%M:%SZ): Used $CLAUDE_TOOL_NAME\" >> ~/.claude/logs/$(date -u +%Y%m%d%H)_usage.log"
+    },
+    {
+      "name": "usage-report-on-session-end",
+      "type": "Stop",
+      "command": "npm run usage:report"
+    }
+  ]
+}

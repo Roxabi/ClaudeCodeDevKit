@@ -1,0 +1,40 @@
+{
+  "name": "devcontainer-template",
+  "version": "1.0.0",
+  "description": "Team development environment template with Claude Code and VSCode",
+  "main": "index.js",
+  "scripts": {
+    "dev": "echo 'Add your development server command here'",
+    "build": "echo 'Add your build command here'",
+    "test": "echo 'Add your test command here'",
+    "test:watch": "echo 'Add your test watch command here'",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist build .next out coverage",
+    "setup": "npm install && npm run format && npm run lint:fix",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f"
+  },
+  "keywords": [
+    "devcontainer",
+    "vscode",
+    "claude-code",
+    "development-environment"
+  ],
+  "author": "Your Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}

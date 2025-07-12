@@ -25,11 +25,11 @@ A standardized development container setup for team collaboration using Claude C
 3. **Opening Claude Code**
 
    Once the container is running, you can access Claude Code in several ways:
-   
+
    ```bash
    # From the terminal inside VSCode
    claude
-   
+
    # Or use the Command Palette in VSCode
    # Ctrl+Shift+P (Cmd+Shift+P on Mac) -> "Claude Code: Start Session"
    ```

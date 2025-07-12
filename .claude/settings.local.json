@@ -7,7 +7,9 @@
       "Bash(docker build:*)",
       "Bash(git commit:*)",
       "Bash(git add:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(ccusage --help)",
+      "Bash(pnpm run:*)"
     ],
     "deny": []
   }

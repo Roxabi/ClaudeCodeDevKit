@@ -18,9 +18,9 @@
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
     "docker:logs": "docker-compose logs -f",
-    "usage": "ccusage",
-    "usage:report": "ccusage report",
-    "usage:monitor": "ccusage monitor"
+    "ccusage": "ccusage",
+    "ccusage:daily": "ccusage daily",
+    "ccusage:session": "ccusage session"
   },
   "keywords": [
     "devcontainer",

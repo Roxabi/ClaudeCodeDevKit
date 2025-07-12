@@ -8,7 +8,7 @@ This repository uses a standardized development container configuration for team
 
 ### Container Setup
 
-- **Base**: Node.js 20 container with comprehensive development tooling
+- **Base**: Node.js container with comprehensive development tooling
 - **User**: `node` (non-root for security)
 - **Workspace**: `/workspace` (mounted from host)
 - **Config**: `/home/node/.claude` (persistent across container rebuilds)
@@ -51,6 +51,7 @@ The development environment includes a firewall configuration that:
 ## Claude Code Guidelines
 
 ### File Discovery
+
 - **Always use `ls -la`** when doing directory listings to include hidden files
 - **Always include hidden file patterns** (`.*`, `**/.*`) in searches
 - **Remember config files** often start with "." (`.devcontainer`, `.gitignore`, `.env`, etc.)

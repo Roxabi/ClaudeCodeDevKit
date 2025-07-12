@@ -48,6 +48,13 @@ The development environment includes a firewall configuration that:
 - `CLAUDE_CONFIG_DIR`: "/home/node/.claude"
 - `DEVCONTAINER`: "true" (indicates container environment)
 
+## Claude Code Guidelines
+
+### File Discovery
+- **Always use `ls -la`** when doing directory listings to include hidden files
+- **Always include hidden file patterns** (`.*`, `**/.*`) in searches
+- **Remember config files** often start with "." (`.devcontainer`, `.gitignore`, `.env`, etc.)
+
 ## Development Workflow
 
 ### Common Commands

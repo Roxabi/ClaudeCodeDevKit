@@ -7,12 +7,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This repository uses a standardized development container configuration for team consistency.
 
 **Configuration Files:**
+
 - **Container setup**: `.devcontainer/devcontainer.json`
 - **Development tools**: `.devcontainer/Dockerfile`
 - **Network security**: `.devcontainer/init-firewall.sh`
 - **Available commands**: `package.json` scripts section
 
 **Key Details:**
+
 - **Base**: Node.js container with comprehensive development tooling
 - **User**: `node` (non-root for security)
 - **Workspace**: `/workspace` (mounted from host)
@@ -22,7 +24,7 @@ This repository uses a standardized development container configuration for team
 
 ### File Discovery
 
-- **Always use `ls -la`** when doing directory listings to include hidden files
+- **Always use `ls -la`** instead of LS tool when doing directory listings to include hidden files
 - **Always include hidden file patterns** (`.*`, `**/.*`) in searches
 - **Remember config files** often start with "." (`.devcontainer`, `.gitignore`, `.env`, etc.)
 

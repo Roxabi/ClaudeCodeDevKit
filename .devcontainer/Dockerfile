@@ -92,7 +92,8 @@ RUN npm install -g \
   tsx \
   ts-node-dev \
   degit \
-  plop
+  plop \
+  task-master-ai
 
 # Copy and set up firewall script
 COPY init-firewall.sh /usr/local/bin/

@@ -112,3 +112,19 @@ test-results/
 
 # Claude Code settings
 .claude/settings.local.json
+
+dev-debug.log
+.env
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+# OS specific
+
+# Task files
+# tasks.json
+# tasks/ 

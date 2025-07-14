@@ -11,7 +11,7 @@ This repository uses a standardized development container configuration for team
 - **Container setup**: `.devcontainer/devcontainer.json`
 - **Development tools**: `.devcontainer/Dockerfile`
 - **Network security**: `.devcontainer/init-firewall.sh`
-- **Available commands**: `package.json` scripts section
+- **Available commands**: `package.json` scripts section (includes comprehensive test suite)
 
 **Key Details:**
 
@@ -37,6 +37,39 @@ This repository uses a standardized development container configuration for team
 3. **Timezone**: Container inherits host timezone via `TZ` environment variable
 4. **Permissions**: All workspace files owned by `node` user for consistent permissions
 5. **Port Forwarding**: Common development ports (3000, 8080, etc.) auto-forwarded
+
+### Test Suite
+
+This repository includes a comprehensive test suite organized into three categories:
+
+**Test Structure:**
+- **Unit Tests**: `tests/unit/` - Test individual components and configurations
+- **Integration Tests**: `tests/integration/` - Test component interactions and services
+- **E2E Tests**: `tests/e2e/` - End-to-end testing scenarios
+
+**Key Test Commands:**
+```bash
+# Run all tests
+npm test
+
+# Run specific test categories
+npm run test:unit
+npm run test:integration
+npm run test:e2e
+
+# Run targeted test suites
+npm run test:unit:devcontainer
+npm run test:integration:environment
+npm run test:integration:services
+```
+
+**Test Coverage:**
+- Devcontainer configuration validation
+- Docker environment setup
+- Service availability and connectivity
+- Port forwarding functionality
+- Development tools integration
+- Runtime environment verification
 
 ## Task Master AI Integration
 

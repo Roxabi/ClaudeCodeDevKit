@@ -164,7 +164,7 @@ export default [
         },
       ],
       'no-multi-assign': 'error',
-      'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
+      'no-plusplus': 'off',
       'prefer-exponentiation-operator': 'error',
       'no-bitwise': 'warn',
       eqeqeq: ['error', 'always'],

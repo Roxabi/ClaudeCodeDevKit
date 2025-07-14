@@ -5,7 +5,7 @@
  * Tests devcontainer.json syntax, required fields, extensions, and configuration settings
  */
 
-/* eslint-disable no-console */
+ 
 
 import fs from 'fs';
 import path from 'path';

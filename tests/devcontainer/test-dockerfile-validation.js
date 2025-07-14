@@ -5,7 +5,7 @@
  * Tests Docker image build process, dependencies, and layer construction
  */
 
-/* eslint-disable no-console */
+ 
 
 import fs from 'fs';
 import path from 'path';

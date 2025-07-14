@@ -42,10 +42,10 @@ const testHttp = (host, port, path = '/', timeout = 3000) => {
   return new Promise(resolve => {
     const options = {
       hostname: host,
-      port: port,
-      path: path,
+      port,
+      path,
       method: 'GET',
-      timeout: timeout,
+      timeout,
     };
 
     const req = http.request(options, res => {
@@ -151,12 +151,12 @@ const testLocalhostConnectivity = async () => {
 
     return new Promise((resolve) => {
       server.listen(0, '127.0.0.1', () => {
-        const port = server.address().port;
+        const {port} = server.address();
         
         // Test connection to our own server
         const req = http.request({
           hostname: '127.0.0.1',
-          port: port,
+          port,
           path: '/',
           method: 'GET',
           timeout: 2000
@@ -472,7 +472,7 @@ const runTests = async () => {
     }
   }
 
-  console.log('\n' + '='.repeat(60));
+  console.log(`\n${  '='.repeat(60)}`);
   console.log('📊 Test Summary');
   console.log('='.repeat(60));
 
@@ -492,7 +492,7 @@ const runTests = async () => {
       });
   }
 
-  console.log('\n' + '='.repeat(60));
+  console.log(`\n${  '='.repeat(60)}`);
 
   process.exit(failed > 0 ? 1 : 0);
 };

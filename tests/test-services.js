@@ -62,10 +62,10 @@ const testHttp = (host, port, path = '/', timeout = 5000) => {
   return new Promise(resolve => {
     const options = {
       hostname: host,
-      port: port,
-      path: path,
+      port,
+      path,
       method: 'GET',
-      timeout: timeout,
+      timeout,
     };
 
     const req = http.request(options, res => {
@@ -275,7 +275,7 @@ const testDockerDaemon = async () => {
       return {
         success: true,
         message: 'Docker daemon accessible from dev container',
-        serverVersion: serverVersion,
+        serverVersion,
       };
     } else {
       return { success: false, error: 'Docker daemon not accessible' };
@@ -325,7 +325,7 @@ const runTests = async () => {
     }
   }
 
-  console.log('\\n' + '='.repeat(50));
+  console.log(`\\n${  '='.repeat(50)}`);
   console.log('📊 Test Summary');
   console.log('='.repeat(50));
 
@@ -347,7 +347,7 @@ const runTests = async () => {
       });
   }
 
-  console.log('\\n' + '='.repeat(50));
+  console.log(`\\n${  '='.repeat(50)}`);
 
   process.exit(failed > 0 ? 1 : 0);
 };

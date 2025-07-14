@@ -148,33 +148,25 @@ The Development Environment Template is a comprehensive, standardized developmen
 
 ### 5.1 Container Architecture
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     Host Machine                            │
-│  ┌─────────────────────────────────────────────────────────┐│
-│  │                   VSCode Desktop                        ││
-│  │  ┌─────────────────────────────────────────────────────┐││
-│  │  │             Dev Container                           │││
-│  │  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │││
-│  │  │  │   Node.js   │ │  Claude     │ │   Dev Tools │   │││
-│  │  │  │   Runtime   │ │   Code      │ │  (git, zsh) │   │││
-│  │  │  └─────────────┘ └─────────────┘ └─────────────┘   │││
-│  │  │                                                     │││
-│  │  │  ┌─────────────────────────────────────────────┐   │││
-│  │  │  │           Workspace (/workspace)            │   │││
-│  │  │  │         (mounted from host)                 │   │││
-│  │  │  └─────────────────────────────────────────────┘   │││
-│  │  └─────────────────────────────────────────────────────┘││
-│  └─────────────────────────────────────────────────────────┘│
-│                                                             │
-│  ┌─────────────────────────────────────────────────────────┐│
-│  │               Docker Services                           ││
-│  │  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐       ││
-│  │  │PostgreSQL│ │  Redis  │ │ MailHog │ │  MinIO  │       ││
-│  │  │  :5432   │ │  :6379  │ │:1025/8025│ │:9000/9001│     ││
-│  │  └─────────┘ └─────────┘ └─────────┘ └─────────┘       ││
-│  └─────────────────────────────────────────────────────────┘│
-└─────────────────────────────────────────────────────────────┘
+```mermaid
+graph TB
+    subgraph Host ["Host Machine"]
+        subgraph VSCode ["VSCode Desktop"]
+            subgraph DevContainer ["Dev Container"]
+                NodeJS["Node.js Runtime"]
+                Claude["Claude Code"]
+                DevTools["Dev Tools<br/>(git, zsh)"]
+                Workspace["Workspace (/workspace)<br/>(mounted from host)"]
+            end
+        end
+        
+        subgraph DockerServices ["Docker Services"]
+            PostgreSQL["PostgreSQL<br/>:5432"]
+            Redis["Redis<br/>:6379"]
+            MailHog["MailHog<br/>:1025/8025"]
+            MinIO["MinIO<br/>:9000/9001"]
+        end
+    end
 ```
 
 ### 5.2 Security Model

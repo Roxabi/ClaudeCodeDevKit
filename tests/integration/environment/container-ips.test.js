@@ -15,7 +15,7 @@ const containers = [
   { name: 'MinIO Console', ip: '172.19.0.5', port: 9001 },
 ];
 
-const testPort = (host, port, timeout = 3000) => {
+const testPort = (host, port, timeout = 1000) => {
   return new Promise(resolve => {
     const socket = new net.Socket();
 
@@ -57,8 +57,8 @@ describe('Container IP Address Tests', () => {
         const ipParts = container.ip.split('.');
         expect(ipParts.length).toBe(4);
         expect(ipParts[0]).toBe('172');
-        expect(parseInt(ipParts[1])).toBeGreaterThanOrEqual(16);
-        expect(parseInt(ipParts[1])).toBeLessThanOrEqual(31);
+        expect(parseInt(ipParts[1], 10)).toBeGreaterThanOrEqual(16);
+        expect(parseInt(ipParts[1], 10)).toBeLessThanOrEqual(31);
       });
     });
 

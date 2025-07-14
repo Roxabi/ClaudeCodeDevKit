@@ -69,14 +69,14 @@
       {
         "id": 6,
         "title": "Verify Docker Services Integration",
-        "description": "Test Docker services startup and connectivity from development environment",
-        "details": "Test 'npm run docker:up' starts all services (PostgreSQL, Redis, MailHog, MinIO) successfully. Verify connectivity to each service from the development environment. Test database connection, Redis cache operations, MailHog email testing, and MinIO object storage access.",
-        "testStrategy": "Create connection test scripts for each service and verify they can connect successfully. Test service health endpoints and basic operations for each service",
-        "priority": "high",
+        "description": "Test Docker services startup and connectivity from development environment, with special consideration for dev container environment where external Docker daemon from host system should be used",
+        "status": "done",
         "dependencies": [
           3
         ],
-        "status": "pending",
+        "priority": "high",
+        "details": "Test 'npm run docker:up' starts all services (PostgreSQL, Redis, MailHog, MinIO) successfully from within the dev container environment. Verify that the dev container can access Docker services running on the host system's Docker daemon (not Docker-in-Docker). Test connectivity to each service from the development environment, including database connection, Redis cache operations, MailHog email testing, and MinIO object storage access. Include detection of dev container environment and use appropriate Docker commands accordingly.",
+        "testStrategy": "Create connection test scripts for each service and verify they can connect successfully from within the dev container. Test service health endpoints and basic operations for each service. Include checks to detect if running in dev container environment and verify Docker daemon accessibility from container to host system",
         "subtasks": []
       },
       {
@@ -285,7 +285,7 @@
     ],
     "metadata": {
       "created": "2025-07-14T07:43:12.578Z",
-      "updated": "2025-07-14T08:15:35.882Z",
+      "updated": "2025-07-14T08:52:40.052Z",
       "description": "Tasks for master context"
     }
   }

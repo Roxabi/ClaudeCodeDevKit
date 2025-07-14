@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Team development environment template with Claude Code and VSCode",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "dev": "echo 'Add your development server command here'",
     "build": "echo 'Add your build command here'",
@@ -31,9 +32,16 @@
   "author": "Mickael",
   "license": "MIT",
   "devDependencies": {
+    "@eslint/js": "^9.31.0",
     "@types/node": "^24.0.13",
+    "@typescript-eslint/eslint-plugin": "^8.21.0",
+    "@typescript-eslint/parser": "^8.21.0",
+    "dotenv": "^16.4.7",
     "eslint": "^9.31.0",
+    "eslint-config-prettier": "^10.0.1",
+    "globals": "^15.0.0",
     "prettier": "^3.6.2",
+    "tsx": "^4.0.0",
     "typescript": "^5.8.3"
   },
   "engines": {

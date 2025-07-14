@@ -40,7 +40,7 @@ This repository uses a standardized development container configuration for team
 
 ## Task Master AI Integration
 
-This project uses Task Master AI for structured task management and development workflows. 
+This project uses Task Master AI for structured task management and development workflows.
 
 📖 **Complete documentation**: [Task Master MCP Guide](.docs/mcp/taskmaster.md)
 

@@ -205,11 +205,14 @@ export default [
 
   // Test files configuration
   {
-    files: ['**/*.test.ts', '**/*.test.js', '**/*.spec.ts', '**/*.spec.js'],
+    files: ['**/*.test.ts', '**/*.test.js', '**/*.spec.ts', '**/*.spec.js', 'tests/**/*.js'],
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
       'no-console': 'off',
       'max-nested-callbacks': 'off',
+      'no-await-in-loop': 'off',
+      'no-shadow': 'off',
+      'no-unused-vars': 'off',
     },
   },
 ];

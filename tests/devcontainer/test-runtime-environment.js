@@ -282,7 +282,7 @@ async function testSystemResources() {
     
     // Test CPU information
     const { stdout: cpuinfo } = await execAsync('nproc');
-    const cpuCount = parseInt(cpuinfo.trim());
+    const cpuCount = parseInt(cpuinfo.trim(), 10);
     logTest('CPU information is accessible', cpuCount > 0, 
       `CPU cores: ${cpuCount}`);
     

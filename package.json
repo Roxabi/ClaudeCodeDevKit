@@ -7,15 +7,9 @@
   "scripts": {
     "dev": "echo 'Add your development server command here'",
     "build": "echo 'Add your build command here'",
-    "test": "npm run test:unit && npm run test:integration && npm run test:e2e",
-    "test:unit": "node tests/unit/devcontainer/devcontainer-config.test.js && node tests/unit/devcontainer/dockerfile-validation.test.js && node tests/unit/devcontainer/runtime-environment.test.js",
-    "test:integration": "node tests/integration/environment/env-validation.test.js && node tests/integration/environment/container-ips.test.js && node tests/integration/services/services.test.js && node tests/integration/services/host-services.test.js && node tests/integration/devcontainer/development-tools.test.js && node tests/integration/devcontainer/port-forwarding.test.js",
-    "test:e2e": "node tests/e2e/devcontainer/run-all-tests.js",
-    "test:unit:devcontainer": "node tests/unit/devcontainer/devcontainer-config.test.js && node tests/unit/devcontainer/dockerfile-validation.test.js && node tests/unit/devcontainer/runtime-environment.test.js",
-    "test:integration:environment": "node tests/integration/environment/env-validation.test.js && node tests/integration/environment/container-ips.test.js",
-    "test:integration:services": "node tests/integration/services/services.test.js && node tests/integration/services/host-services.test.js",
-    "test:integration:devcontainer": "node tests/integration/devcontainer/development-tools.test.js && node tests/integration/devcontainer/port-forwarding.test.js",
-    "test:all": "npm run test",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "format": "prettier --write .",
@@ -49,7 +43,8 @@
     "globals": "^15.0.0",
     "prettier": "^3.6.2",
     "tsx": "^4.0.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   },
   "engines": {
     "node": ">=18.0.0",

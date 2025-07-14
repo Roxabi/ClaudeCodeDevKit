@@ -93,6 +93,7 @@ RUN npm install -g \
   ts-node-dev \
   degit \
   plop \
+  vitest \
   task-master-ai@latest
 
 # Copy and set up firewall script

@@ -1,12 +1,9 @@
-#!/usr/bin/env node
-
 /**
  * DevContainer Configuration Validation Test Suite
  * Tests devcontainer.json syntax, required fields, extensions, and configuration settings
  */
 
- 
-
+import { describe, test, expect, beforeAll } from 'vitest';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -18,35 +15,6 @@ const devcontainerPath = path.join(
   '.devcontainer',
   'devcontainer.json'
 );
-
-// Test utilities
-let testCount = 0;
-let passCount = 0;
-let failCount = 0;
-
-const test = (description, testFn) => {
-  testCount++;
-  try {
-    const result = testFn();
-    if (result) {
-      passCount++;
-      console.log(`✅ ${description}`);
-    } else {
-      failCount++;
-      console.log(`❌ ${description}`);
-    }
-  } catch (err) {
-    failCount++;
-    console.log(`❌ ${description} - Error: ${err.message}`);
-  }
-};
-
-const assert = (condition, message) => {
-  if (!condition) {
-    throw new Error(message || 'Assertion failed');
-  }
-  return true;
-};
 
 // Test data for negative cases
 const invalidJsonSamples = [
@@ -89,365 +57,267 @@ const invalidExtensionIds = [
   'publisher.',
 ];
 
-// Main test suite
-console.log('🚀 DevContainer Configuration Validation Tests');
-console.log('='.repeat(60));
-
-// Test 1: JSON Syntax Validation
-console.log('\n📝 JSON Syntax Validation Tests');
-test('devcontainer.json file exists', () => {
-  return fs.existsSync(devcontainerPath);
-});
-
-test('devcontainer.json has valid JSON syntax', () => {
-  const content = fs.readFileSync(devcontainerPath, 'utf8');
-  JSON.parse(content);
-  return true;
-});
-
-test('devcontainer.json is properly formatted', () => {
-  const content = fs.readFileSync(devcontainerPath, 'utf8');
-  const parsed = JSON.parse(content);
-  const formatted = JSON.stringify(parsed, null, 2);
-
-  if (content.trim() !== formatted) {
-    console.log(
-      '   📝 Formatting differences found - this is informational only'
-    );
-    return true; // Make this a warning instead of failure
-  }
-  return true;
-});
-
-// Test 2: Required Fields Validation
-console.log('\n📋 Required Fields Validation Tests');
 let config;
-try {
-  config = JSON.parse(fs.readFileSync(devcontainerPath, 'utf8'));
-} catch (_error) {
-  console.error('❌ Cannot parse devcontainer.json for field validation');
-  config = {};
-}
 
-test('has required "name" field', () => {
-  return assert(
-    config.name && typeof config.name === 'string',
-    'name must be a non-empty string'
-  );
-});
-
-test('has valid build configuration', () => {
-  return assert(
-    config.build &&
-      (config.build.dockerfile || config.build.image || config.image),
-    'must have either build.dockerfile, build.image, or image field'
-  );
-});
-
-test('has valid workspace configuration', () => {
-  return assert(
-    config.workspaceFolder && typeof config.workspaceFolder === 'string',
-    'workspaceFolder must be a non-empty string'
-  );
-});
-
-test('has valid remoteUser configuration', () => {
-  return assert(
-    config.remoteUser && typeof config.remoteUser === 'string',
-    'remoteUser must be a non-empty string'
-  );
-});
-
-// Test 3: Extension ID Verification
-console.log('\n🔌 Extension ID Verification Tests');
-test('customizations.vscode.extensions exists and is array', () => {
-  return assert(
-    config.customizations?.vscode?.extensions &&
-      Array.isArray(config.customizations.vscode.extensions),
-    'extensions must be an array'
-  );
-});
-
-test('all extension IDs follow correct format', () => {
-  const extensions = config.customizations?.vscode?.extensions || [];
-  const extensionIdPattern = /^[a-z0-9_-]+\.[a-z0-9_-]+$/i;
-
-  for (const ext of extensions) {
-    assert(
-      typeof ext === 'string' && extensionIdPattern.test(ext),
-      `Invalid extension ID format: ${ext}`
-    );
+beforeAll(() => {
+  try {
+    config = JSON.parse(fs.readFileSync(devcontainerPath, 'utf8'));
+  } catch (error) {
+    config = {};
   }
-  return true;
 });
 
-test('extension IDs are known valid extensions', () => {
-  const extensions = config.customizations?.vscode?.extensions || [];
-  const unknownExtensions = extensions.filter(
-    ext => !validExtensionIds.includes(ext)
-  );
+describe('DevContainer Configuration', () => {
+  describe('JSON Syntax Validation', () => {
+    test('devcontainer.json file exists', () => {
+      expect(fs.existsSync(devcontainerPath)).toBe(true);
+    });
 
-  if (unknownExtensions.length > 0) {
-    console.log(
-      `   ⚠️  Unknown extensions found: ${unknownExtensions.join(', ')}`
-    );
-  }
+    test('devcontainer.json has valid JSON syntax', () => {
+      const content = fs.readFileSync(devcontainerPath, 'utf8');
+      expect(() => JSON.parse(content)).not.toThrow();
+    });
 
-  return true; // This is a warning, not a failure
-});
+    test('devcontainer.json is properly formatted', () => {
+      const content = fs.readFileSync(devcontainerPath, 'utf8');
+      const parsed = JSON.parse(content);
+      const formatted = JSON.stringify(parsed, null, 2);
+      
+      // This is informational only - we don't fail on formatting differences
+      expect(parsed).toBeDefined();
+    });
+  });
 
-test('no duplicate extension IDs', () => {
-  const extensions = config.customizations?.vscode?.extensions || [];
-  const uniqueExtensions = new Set(extensions);
+  describe('Required Fields Validation', () => {
+    test('has required "name" field', () => {
+      expect(config.name).toBeDefined();
+      expect(typeof config.name).toBe('string');
+      expect(config.name.length).toBeGreaterThan(0);
+    });
 
-  return assert(
-    extensions.length === uniqueExtensions.size,
-    'No duplicate extension IDs allowed'
-  );
-});
+    test('has valid build configuration', () => {
+      expect(
+        config.build?.dockerfile || 
+        config.build?.image || 
+        config.image
+      ).toBeDefined();
+    });
 
-// Test 4: Port Forwarding Configuration
-console.log('\n🔗 Port Forwarding Configuration Tests');
-test('forwardPorts is array of valid port numbers', () => {
-  if (!config.forwardPorts) return true; // Optional field
+    test('has valid workspace configuration', () => {
+      expect(config.workspaceFolder).toBeDefined();
+      expect(typeof config.workspaceFolder).toBe('string');
+      expect(config.workspaceFolder.length).toBeGreaterThan(0);
+    });
 
-  assert(Array.isArray(config.forwardPorts), 'forwardPorts must be an array');
+    test('has valid remoteUser configuration', () => {
+      expect(config.remoteUser).toBeDefined();
+      expect(typeof config.remoteUser).toBe('string');
+      expect(config.remoteUser.length).toBeGreaterThan(0);
+    });
+  });
 
-  for (const port of config.forwardPorts) {
-    assert(
-      typeof port === 'number' && port > 0 && port <= 65535,
-      `Invalid port number: ${port}`
-    );
-  }
-  return true;
-});
+  describe('Extension ID Verification', () => {
+    test('customizations.vscode.extensions exists and is array', () => {
+      expect(config.customizations?.vscode?.extensions).toBeDefined();
+      expect(Array.isArray(config.customizations.vscode.extensions)).toBe(true);
+    });
 
-test('portsAttributes has valid configuration', () => {
-  if (!config.portsAttributes) return true; // Optional field
+    test('all extension IDs follow correct format', () => {
+      const extensions = config.customizations?.vscode?.extensions || [];
+      const extensionIdPattern = /^[a-z0-9_-]+\.[a-z0-9_-]+$/i;
 
-  assert(
-    typeof config.portsAttributes === 'object',
-    'portsAttributes must be an object'
-  );
+      extensions.forEach(ext => {
+        expect(typeof ext).toBe('string');
+        expect(extensionIdPattern.test(ext)).toBe(true);
+      });
+    });
 
-  for (const [port, attrs] of Object.entries(config.portsAttributes)) {
-    const portNum = parseInt(port, 10);
-    assert(
-      portNum > 0 && portNum <= 65535,
-      `Invalid port in portsAttributes: ${port}`
-    );
-
-    if (attrs.onAutoForward) {
-      assert(
-        ['notify', 'openBrowser', 'openPreview', 'silent', 'ignore'].includes(
-          attrs.onAutoForward
-        ),
-        `Invalid onAutoForward value: ${attrs.onAutoForward}`
+    test('extension IDs are known valid extensions', () => {
+      const extensions = config.customizations?.vscode?.extensions || [];
+      const unknownExtensions = extensions.filter(
+        ext => !validExtensionIds.includes(ext)
       );
-    }
-  }
-  return true;
+
+      if (unknownExtensions.length > 0) {
+        console.warn(`Unknown extensions found: ${unknownExtensions.join(', ')}`);
+      }
+
+      // This is a warning, not a failure
+      expect(extensions).toBeDefined();
+    });
+
+    test('no duplicate extension IDs', () => {
+      const extensions = config.customizations?.vscode?.extensions || [];
+      const uniqueExtensions = new Set(extensions);
+
+      expect(extensions.length).toBe(uniqueExtensions.size);
+    });
+  });
+
+  describe('Port Forwarding Configuration', () => {
+    test('forwardPorts is array of valid port numbers', () => {
+      if (!config.forwardPorts) return; // Optional field
+
+      expect(Array.isArray(config.forwardPorts)).toBe(true);
+
+      config.forwardPorts.forEach(port => {
+        expect(typeof port).toBe('number');
+        expect(port).toBeGreaterThan(0);
+        expect(port).toBeLessThanOrEqual(65535);
+      });
+    });
+
+    test('portsAttributes has valid configuration', () => {
+      if (!config.portsAttributes) return; // Optional field
+
+      expect(typeof config.portsAttributes).toBe('object');
+
+      Object.entries(config.portsAttributes).forEach(([port, attrs]) => {
+        const portNum = parseInt(port, 10);
+        expect(portNum).toBeGreaterThan(0);
+        expect(portNum).toBeLessThanOrEqual(65535);
+
+        if (attrs.onAutoForward) {
+          expect(['notify', 'openBrowser', 'openPreview', 'silent', 'ignore'])
+            .toContain(attrs.onAutoForward);
+        }
+      });
+    });
+
+    test('forwarded ports match portsAttributes', () => {
+      if (!config.forwardPorts || !config.portsAttributes) return;
+
+      const forwardedPorts = config.forwardPorts.map(p => p.toString());
+      const attributePorts = Object.keys(config.portsAttributes);
+
+      attributePorts.forEach(attrPort => {
+        expect(forwardedPorts).toContain(attrPort);
+      });
+    });
+  });
+
+  describe('Mount Point Validation', () => {
+    test('mounts is array of valid mount configurations', () => {
+      if (!config.mounts) return; // Optional field
+
+      expect(Array.isArray(config.mounts)).toBe(true);
+
+      config.mounts.forEach(mount => {
+        expect(typeof mount).toBe('string');
+        expect(mount).toContain('source=');
+        expect(mount).toContain('target=');
+        expect(mount).toContain('type=');
+
+        const type = mount.match(/type=([^,]+)/)?.[1];
+        expect(['bind', 'volume', 'tmpfs']).toContain(type);
+      });
+    });
+
+    test('workspaceMount has valid configuration', () => {
+      if (!config.workspaceMount) return; // Optional field
+
+      expect(typeof config.workspaceMount).toBe('string');
+      expect(config.workspaceMount).toContain('source=');
+      expect(config.workspaceMount).toContain('target=');
+      expect(config.workspaceMount).toContain('type=');
+    });
+  });
+
+  describe('Features Configuration', () => {
+    test('features configuration is valid', () => {
+      if (!config.features) return; // Optional field
+
+      expect(typeof config.features).toBe('object');
+
+      Object.entries(config.features).forEach(([featureId, featureConfig]) => {
+        expect(
+          featureId.startsWith('ghcr.io/') ||
+          featureId.startsWith('mcr.microsoft.com/')
+        ).toBe(true);
+
+        if (featureConfig !== null) {
+          expect(typeof featureConfig).toBe('object');
+        }
+      });
+    });
+  });
+
+  describe('Negative Test Cases', () => {
+    test('rejects malformed JSON syntax', () => {
+      let rejectedCount = 0;
+
+      invalidJsonSamples.forEach(invalidJson => {
+        try {
+          JSON.parse(invalidJson);
+        } catch (error) {
+          rejectedCount++;
+        }
+      });
+
+      expect(rejectedCount).toBe(invalidJsonSamples.length);
+    });
+
+    test('validates extension ID format strictly', () => {
+      const extensionIdPattern = /^[a-z0-9_-]+\.[a-z0-9_-]+$/i;
+      let rejectedCount = 0;
+
+      invalidExtensionIds.forEach(invalidId => {
+        if (
+          !extensionIdPattern.test(invalidId) ||
+          invalidId.split('.').length !== 2
+        ) {
+          rejectedCount++;
+        }
+      });
+
+      expect(rejectedCount).toBe(invalidExtensionIds.length);
+    });
+
+    test('validates port number ranges', () => {
+      const invalidPorts = [-1, 0, 65536, 100000, 'invalid', null, undefined];
+      let rejectedCount = 0;
+
+      invalidPorts.forEach(port => {
+        if (typeof port !== 'number' || port <= 0 || port > 65535) {
+          rejectedCount++;
+        }
+      });
+
+      expect(rejectedCount).toBe(invalidPorts.length);
+    });
+  });
+
+  describe('Environment Variables', () => {
+    test('remoteEnv configuration is valid', () => {
+      if (!config.remoteEnv) return; // Optional field
+
+      expect(typeof config.remoteEnv).toBe('object');
+
+      Object.entries(config.remoteEnv).forEach(([key, value]) => {
+        expect(typeof key).toBe('string');
+        expect(key.length).toBeGreaterThan(0);
+        expect(typeof value).toBe('string');
+      });
+    });
+  });
+
+  describe('Command Configuration', () => {
+    test('postCreateCommand is valid', () => {
+      if (!config.postCreateCommand) return; // Optional field
+
+      expect(
+        typeof config.postCreateCommand === 'string' ||
+        Array.isArray(config.postCreateCommand)
+      ).toBe(true);
+    });
+
+    test('postStartCommand is valid', () => {
+      if (!config.postStartCommand) return; // Optional field
+
+      expect(
+        typeof config.postStartCommand === 'string' ||
+        Array.isArray(config.postStartCommand)
+      ).toBe(true);
+    });
+  });
 });
-
-test('forwarded ports match portsAttributes', () => {
-  if (!config.forwardPorts || !config.portsAttributes) return true;
-
-  const forwardedPorts = config.forwardPorts.map(p => p.toString());
-  const attributePorts = Object.keys(config.portsAttributes);
-
-  for (const attrPort of attributePorts) {
-    assert(
-      forwardedPorts.includes(attrPort),
-      `Port ${attrPort} has attributes but is not in forwardPorts`
-    );
-  }
-  return true;
-});
-
-// Test 5: Mount Point Validation
-console.log('\n📁 Mount Point Validation Tests');
-test('mounts is array of valid mount configurations', () => {
-  if (!config.mounts) return true; // Optional field
-
-  assert(Array.isArray(config.mounts), 'mounts must be an array');
-
-  for (const mount of config.mounts) {
-    assert(typeof mount === 'string', 'mount must be a string');
-    assert(mount.includes('source='), 'mount must include source');
-    assert(mount.includes('target='), 'mount must include target');
-    assert(mount.includes('type='), 'mount must include type');
-
-    const type = mount.match(/type=([^,]+)/)?.[1];
-    assert(
-      ['bind', 'volume', 'tmpfs'].includes(type),
-      `Invalid mount type: ${type}`
-    );
-  }
-  return true;
-});
-
-test('workspaceMount has valid configuration', () => {
-  if (!config.workspaceMount) return true; // Optional field
-
-  assert(
-    typeof config.workspaceMount === 'string',
-    'workspaceMount must be a string'
-  );
-  assert(
-    config.workspaceMount.includes('source='),
-    'workspaceMount must include source'
-  );
-  assert(
-    config.workspaceMount.includes('target='),
-    'workspaceMount must include target'
-  );
-  assert(
-    config.workspaceMount.includes('type='),
-    'workspaceMount must include type'
-  );
-
-  return true;
-});
-
-// Test 6: Features Configuration
-console.log('\n🎯 Features Configuration Tests');
-test('features configuration is valid', () => {
-  if (!config.features) return true; // Optional field
-
-  assert(typeof config.features === 'object', 'features must be an object');
-
-  for (const [featureId, featureConfig] of Object.entries(config.features)) {
-    assert(
-      featureId.startsWith('ghcr.io/') ||
-        featureId.startsWith('mcr.microsoft.com/'),
-      `Invalid feature ID format: ${featureId}`
-    );
-
-    if (featureConfig !== null) {
-      assert(
-        typeof featureConfig === 'object',
-        `Feature config must be object or null: ${featureId}`
-      );
-    }
-  }
-  return true;
-});
-
-// Test 7: Negative Test Cases
-console.log('\n🚫 Negative Test Cases');
-test('rejects malformed JSON syntax', () => {
-  let rejectedCount = 0;
-
-  for (const invalidJson of invalidJsonSamples) {
-    try {
-      JSON.parse(invalidJson);
-    } catch (_error) {
-      rejectedCount++;
-    }
-  }
-
-  return assert(
-    rejectedCount === invalidJsonSamples.length,
-    `Expected all ${invalidJsonSamples.length} invalid JSON samples to be rejected`
-  );
-});
-
-test('validates extension ID format strictly', () => {
-  const extensionIdPattern = /^[a-z0-9_-]+\.[a-z0-9_-]+$/i;
-  let rejectedCount = 0;
-
-  for (const invalidId of invalidExtensionIds) {
-    if (
-      !extensionIdPattern.test(invalidId) ||
-      invalidId.split('.').length !== 2
-    ) {
-      rejectedCount++;
-    }
-  }
-
-  return assert(
-    rejectedCount === invalidExtensionIds.length,
-    `Expected all ${invalidExtensionIds.length} invalid extension IDs to be rejected, got ${rejectedCount}`
-  );
-});
-
-test('validates port number ranges', () => {
-  const invalidPorts = [-1, 0, 65536, 100000, 'invalid', null, undefined];
-  let rejectedCount = 0;
-
-  for (const port of invalidPorts) {
-    if (typeof port !== 'number' || port <= 0 || port > 65535) {
-      rejectedCount++;
-    }
-  }
-
-  return assert(
-    rejectedCount === invalidPorts.length,
-    `Expected all ${invalidPorts.length} invalid ports to be rejected`
-  );
-});
-
-// Test 8: Environment Variables
-console.log('\n🌍 Environment Variables Tests');
-test('remoteEnv configuration is valid', () => {
-  if (!config.remoteEnv) return true; // Optional field
-
-  assert(typeof config.remoteEnv === 'object', 'remoteEnv must be an object');
-
-  for (const [key, value] of Object.entries(config.remoteEnv)) {
-    assert(
-      typeof key === 'string' && key.length > 0,
-      `Invalid environment variable name: ${key}`
-    );
-    assert(
-      typeof value === 'string',
-      `Environment variable value must be string: ${key}`
-    );
-  }
-  return true;
-});
-
-// Test 9: Command Configuration
-console.log('\n⚙️ Command Configuration Tests');
-test('postCreateCommand is valid', () => {
-  if (!config.postCreateCommand) return true; // Optional field
-
-  assert(
-    typeof config.postCreateCommand === 'string' ||
-      Array.isArray(config.postCreateCommand),
-    'postCreateCommand must be string or array'
-  );
-
-  return true;
-});
-
-test('postStartCommand is valid', () => {
-  if (!config.postStartCommand) return true; // Optional field
-
-  assert(
-    typeof config.postStartCommand === 'string' ||
-      Array.isArray(config.postStartCommand),
-    'postStartCommand must be string or array'
-  );
-
-  return true;
-});
-
-// Test Results Summary
-console.log(`\n${'='.repeat(60)}`);
-console.log('📊 Test Results Summary');
-console.log('='.repeat(60));
-console.log(`Total tests: ${testCount}`);
-console.log(`✅ Passed: ${passCount}`);
-console.log(`❌ Failed: ${failCount}`);
-console.log(`📈 Success rate: ${((passCount / testCount) * 100).toFixed(1)}%`);
-
-if (failCount > 0) {
-  console.log(
-    '\n❌ Some tests failed. Please review the devcontainer.json configuration.'
-  );
-  process.exit(1);
-} else {
-  console.log('\n✅ All tests passed! DevContainer configuration is valid.');
-  process.exit(0);
-}

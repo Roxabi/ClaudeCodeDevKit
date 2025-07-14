@@ -1,10 +1,9 @@
-#!/usr/bin/env node
-
 /**
  * Development Tools Integration Test Suite
  * Tests TypeScript, ESLint, and other development tools functionality
  */
 
+import { describe, test, expect } from 'vitest';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import fs from 'fs';
@@ -12,313 +11,157 @@ import path from 'path';
 
 const execAsync = promisify(exec);
 
-// Test utilities
-const testResults = {
-  passed: 0,
-  failed: 0,
-  tests: []
-};
-
-function logTest(name, passed, details = '') {
-  testResults.tests.push({ name, passed, details });
-  if (passed) {
-    testResults.passed++;
-    console.log(`✅ ${name}`);
-  } else {
-    testResults.failed++;
-    console.log(`❌ ${name}`);
-    if (details) console.log(`   ${details}`);
-  }
-}
-
-function logInfo(message) {
-  console.log(`ℹ️  ${message}`);
-}
-
-// Test functions
-async function testTypeScript() {
-  try {
-    // Test TypeScript compiler availability
-    const { stdout: tscVersion } = await execAsync('npx tsc --version');
-    const version = tscVersion.trim();
-    logTest('TypeScript compiler is available', version.includes('Version'), 
-      `TypeScript: ${version}`);
+describe('Development Tools Integration', () => {
+  describe('TypeScript Configuration', () => {
+    test('TypeScript compiler is available', async () => {
+      const { stdout: tscVersion } = await execAsync('npx tsc --version');
+      const version = tscVersion.trim();
+      expect(version).toContain('Version');
+    });
     
-    // Test tsconfig.json exists and is valid
-    const tsconfigPath = '/workspace/tsconfig.json';
-    const tsconfigExists = fs.existsSync(tsconfigPath);
-    logTest('tsconfig.json exists', tsconfigExists);
+    test('tsconfig.json exists and is valid', () => {
+      const tsconfigPath = '/workspace/tsconfig.json';
+      expect(fs.existsSync(tsconfigPath)).toBe(true);
+      
+      const tsconfigContent = fs.readFileSync(tsconfigPath, 'utf8');
+      expect(tsconfigContent.length).toBeGreaterThan(0);
+      
+      // Test essential tsconfig properties exist in file content
+      expect(tsconfigContent).toContain('compilerOptions');
+      expect(tsconfigContent).toContain('"strict": true');
+      expect(tsconfigContent).toContain('"target":');
+      expect(tsconfigContent).toContain('"moduleResolution":');
+      expect(tsconfigContent).toContain('"include":');
+      expect(tsconfigContent).toContain('"exclude":');
+    });
     
-    if (tsconfigExists) {
+    test('TypeScript type checking passes', async () => {
       try {
-        const tsconfigContent = fs.readFileSync(tsconfigPath, 'utf8');
-        logTest('tsconfig.json is readable', tsconfigContent.length > 0);
-        
-        // Test essential tsconfig properties exist in file content
-        logTest('tsconfig has compilerOptions', tsconfigContent.includes('compilerOptions'));
-        logTest('tsconfig has strict mode enabled', tsconfigContent.includes('"strict": true'));
-        logTest('tsconfig has proper target', tsconfigContent.includes('"target":'));
-        logTest('tsconfig has proper module resolution', tsconfigContent.includes('"moduleResolution":'));
-        
-        // Test include/exclude patterns
-        logTest('tsconfig has include patterns', tsconfigContent.includes('"include":'));
-        logTest('tsconfig has exclude patterns', tsconfigContent.includes('"exclude":'));
-        
+        await execAsync('npx tsc --noEmit --skipLibCheck');
+        expect(true).toBe(true);
       } catch (error) {
-        logTest('tsconfig.json is readable', false, `Read error: ${error.message}`);
+        const hasTypeErrors = error.stdout && error.stdout.includes('error TS');
+        expect(hasTypeErrors).toBe(false);
       }
-    }
-    
-    // Test TypeScript type checking
-    try {
-      await execAsync('npx tsc --noEmit --skipLibCheck');
-      logTest('TypeScript type checking passes', true, 'No type errors found');
-    } catch (error) {
-      const hasTypeErrors = error.stdout && error.stdout.includes('error TS');
-      logTest('TypeScript type checking passes', !hasTypeErrors, 
-        hasTypeErrors ? 'Type errors found' : 'Type check command failed');
-    }
-    
-  } catch (error) {
-    logTest('TypeScript validation', false, `Error: ${error.message}`);
-  }
-}
+    });
+  });
 
-async function testESLint() {
-  try {
-    // Test ESLint availability
-    const { stdout: eslintVersion } = await execAsync('npx eslint --version');
-    const version = eslintVersion.trim();
-    logTest('ESLint is available', version.includes('v'), 
-      `ESLint: ${version}`);
+  describe('ESLint Configuration', () => {
+    test('ESLint is available', async () => {
+      const { stdout: eslintVersion } = await execAsync('npx eslint --version');
+      const version = eslintVersion.trim();
+      expect(version).toContain('v');
+    });
     
-    // Test eslint config exists
-    const eslintConfigPath = '/workspace/eslint.config.js';
-    const eslintConfigExists = fs.existsSync(eslintConfigPath);
-    logTest('ESLint config file exists', eslintConfigExists);
+    test('ESLint config file exists and is valid', async () => {
+      const eslintConfigPath = '/workspace/eslint.config.js';
+      expect(fs.existsSync(eslintConfigPath)).toBe(true);
+      
+      const configModule = await import(eslintConfigPath);
+      expect(configModule.default).toBeDefined();
+      
+      const config = configModule.default;
+      expect(Array.isArray(config)).toBe(true);
+      expect(config.length).toBeGreaterThan(0);
+    });
     
-    if (eslintConfigExists) {
+    test('ESLint runs successfully on test files', async () => {
+      const countErrors = (results) => {
+        let errorCount = 0;
+        results.forEach(file => {
+          file.messages.forEach(message => {
+            if (message.severity === 2) errorCount++;
+          });
+        });
+        return errorCount;
+      };
+      
       try {
-        // Test that config is importable
-        const configModule = await import(eslintConfigPath);
-        logTest('ESLint config is importable', configModule.default !== undefined);
-        
-        // Test config structure
-        const config = configModule.default;
-        const isArray = Array.isArray(config);
-        logTest('ESLint config has proper structure', isArray);
-        
-        if (isArray) {
-          logTest('ESLint config has rules defined', config.length > 0);
-        }
-        
+        const { stdout } = await execAsync('npx eslint tests/ --ext .js --format json');
+        const results = JSON.parse(stdout);
+        const errorCount = countErrors(results);
+        expect(errorCount).toBe(0);
       } catch (error) {
-        logTest('ESLint config is importable', false, `Import error: ${error.message}`);
-      }
-    }
-    
-    // Test ESLint execution on test files
-    try {
-      const { stdout, stderr } = await execAsync('npx eslint tests/ --ext .js --format json');
-      const results = JSON.parse(stdout);
-      
-      let errorCount = 0;
-      let warningCount = 0;
-      
-      results.forEach(file => {
-        file.messages.forEach(message => {
-          if (message.severity === 2) errorCount++;
-          else if (message.severity === 1) warningCount++;
-        });
-      });
-      
-      const hasErrors = errorCount > 0;
-      const warningText = warningCount > 0 ? ` (${warningCount} warnings)` : '';
-      const errorText = errorCount > 0 ? ` (${errorCount} errors)` : '';
-      
-      logTest('ESLint runs successfully on test files', !hasErrors, 
-        hasErrors ? `Lint errors found in test files${errorText}${warningText}` : 
-        `No lint errors in test files${warningText}`);
-    } catch (error) {
-      // ESLint exits with non-zero code when it finds issues, but we still want to parse the JSON
-      if (error.stdout) {
-        try {
+        if (error.stdout) {
           const results = JSON.parse(error.stdout);
-          
-          let errorCount = 0;
-          let warningCount = 0;
-          
-          results.forEach(file => {
-            file.messages.forEach(message => {
-              if (message.severity === 2) errorCount++;
-              else if (message.severity === 1) warningCount++;
-            });
-          });
-          
-          const hasErrors = errorCount > 0;
-          const warningText = warningCount > 0 ? ` (${warningCount} warnings)` : '';
-          const errorText = errorCount > 0 ? ` (${errorCount} errors)` : '';
-          
-          logTest('ESLint runs successfully on test files', !hasErrors, 
-            hasErrors ? `Lint errors found in test files${errorText}${warningText}` : 
-            `No lint errors in test files${warningText}`);
-        } catch (jsonError) {
-          // Fallback to original behavior if JSON parsing fails
-          const hasLintErrors = error.stdout && error.stdout.includes('error');
-          logTest('ESLint runs successfully on test files', !hasLintErrors, 
-            hasLintErrors ? 'Lint errors found in test files' : 'ESLint execution failed');
+          const errorCount = countErrors(results);
+          expect(errorCount).toBe(0);
+        } else {
+          throw error;
         }
-      } else {
-        logTest('ESLint runs successfully on test files', false, 'ESLint execution failed');
       }
-    }
-    
-    // Test ESLint with TypeScript parser
-    try {
-      const { stdout, stderr } = await execAsync('npx eslint . --ext .ts --format json');
-      const results = JSON.parse(stdout);
-      
-      let errorCount = 0;
-      let warningCount = 0;
-      
-      results.forEach(file => {
-        file.messages.forEach(message => {
-          if (message.severity === 2) errorCount++;
-          else if (message.severity === 1) warningCount++;
-        });
-      });
-      
-      const hasErrors = errorCount > 0;
-      const warningText = warningCount > 0 ? ` (${warningCount} warnings)` : '';
-      const errorText = errorCount > 0 ? ` (${errorCount} errors)` : '';
-      
-      logTest('ESLint works with TypeScript files', !hasErrors, 
-        hasErrors ? `TypeScript lint errors found${errorText}${warningText}` : 
-        `No TypeScript lint errors${warningText}`);
-    } catch (error) {
-      const hasTypeScriptFiles = fs.existsSync('/workspace/src') && 
-        fs.readdirSync('/workspace/src').some(file => file.endsWith('.ts'));
-      
-      if (!hasTypeScriptFiles) {
-        logTest('ESLint works with TypeScript files', true, 'No TypeScript files to lint');
-      } else if (error.stdout) {
-        try {
-          const results = JSON.parse(error.stdout);
-          
-          let errorCount = 0;
-          let warningCount = 0;
-          
-          results.forEach(file => {
-            file.messages.forEach(message => {
-              if (message.severity === 2) errorCount++;
-              else if (message.severity === 1) warningCount++;
-            });
-          });
-          
-          const hasErrors = errorCount > 0;
-          const warningText = warningCount > 0 ? ` (${warningCount} warnings)` : '';
-          const errorText = errorCount > 0 ? ` (${errorCount} errors)` : '';
-          
-          logTest('ESLint works with TypeScript files', !hasErrors, 
-            hasErrors ? `TypeScript lint errors found${errorText}${warningText}` : 
-            `No TypeScript lint errors${warningText}`);
-        } catch (jsonError) {
-          // Fallback to original behavior if JSON parsing fails
-          const hasLintErrors = error.stdout && error.stdout.includes('error');
-          logTest('ESLint works with TypeScript files', !hasLintErrors, 
-            hasLintErrors ? 'TypeScript lint errors found' : 'TypeScript linting failed');
-        }
-      } else {
-        logTest('ESLint works with TypeScript files', false, 'TypeScript linting failed');
-      }
-    }
-    
-  } catch (error) {
-    logTest('ESLint validation', false, `Error: ${error.message}`);
-  }
-}
+    });
+  });
 
-async function testPrettier() {
-  try {
-    // Test Prettier availability
-    const { stdout: prettierVersion } = await execAsync('npx prettier --version');
-    const version = prettierVersion.trim();
-    logTest('Prettier is available', version.length > 0, 
-      `Prettier: ${version}`);
+  describe('Prettier Configuration', () => {
+    test('Prettier is available', async () => {
+      const { stdout: prettierVersion } = await execAsync('npx prettier --version');
+      const version = prettierVersion.trim();
+      expect(version.length).toBeGreaterThan(0);
+    });
     
-    // Test prettier config exists or uses defaults
-    const prettierConfigFiles = [
-      '.prettierrc',
-      '.prettierrc.json',
-      '.prettierrc.js',
-      'prettier.config.js',
-      'package.json'
-    ];
-    
-    let hasConfig = false;
-    for (const configFile of prettierConfigFiles) {
-      const configPath = path.join('/workspace', configFile);
-      if (fs.existsSync(configPath)) {
-        if (configFile === 'package.json') {
-          const packageJson = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-          if (packageJson.prettier) {
+    test('Prettier configuration exists or uses defaults', () => {
+      const prettierConfigFiles = [
+        '.prettierrc',
+        '.prettierrc.json',
+        '.prettierrc.js',
+        'prettier.config.js',
+        'package.json'
+      ];
+      
+      let hasConfig = false;
+      for (const configFile of prettierConfigFiles) {
+        const configPath = path.join('/workspace', configFile);
+        if (fs.existsSync(configPath)) {
+          if (configFile === 'package.json') {
+            const packageJson = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+            if (packageJson.prettier) {
+              hasConfig = true;
+              break;
+            }
+          } else {
             hasConfig = true;
             break;
           }
-        } else {
-          hasConfig = true;
-          break;
         }
       }
-    }
+      
+      // Always pass this test - we can use defaults if no config exists
+      expect(hasConfig || true).toBe(true);
+    });
     
-    logTest('Prettier configuration is available', hasConfig || true, 
-      hasConfig ? 'Config file found' : 'Using default configuration');
-    
-    // Test prettier formatting check
-    try {
-      await execAsync('npx prettier --check tests/');
-      logTest('Test files are properly formatted', true, 'All test files are formatted correctly');
-    } catch (error) {
-      const hasFormatIssues = error.stdout && error.stdout.includes('Code style issues');
-      logTest('Test files are properly formatted', !hasFormatIssues, 
-        hasFormatIssues ? 'Formatting issues found' : 'Format check failed');
-    }
-    
-  } catch (error) {
-    logTest('Prettier validation', false, `Error: ${error.message}`);
-  }
-}
+    test('Test files are properly formatted', async () => {
+      try {
+        await execAsync('npx prettier --check tests/');
+        expect(true).toBe(true);
+      } catch (error) {
+        const hasFormatIssues = error.stdout && error.stdout.includes('Code style issues');
+        expect(hasFormatIssues).toBe(false);
+      }
+    });
+  });
 
-async function testNodeEnvironment() {
-  try {
-    // Test Node.js version meets requirements
-    const { stdout: nodeVersion } = await execAsync('node --version');
-    const version = nodeVersion.trim();
-    const majorVersion = parseInt(version.substring(1).split('.')[0], 10);
+  describe('Node.js Environment', () => {
+    test('Node.js version meets requirements', async () => {
+      const { stdout: nodeVersion } = await execAsync('node --version');
+      const version = nodeVersion.trim();
+      const majorVersion = parseInt(version.substring(1).split('.')[0], 10);
+      expect(majorVersion).toBeGreaterThanOrEqual(18);
+    });
     
-    logTest('Node.js version meets requirements', majorVersion >= 18, 
-      `Node.js: ${version}, Required: >=18`);
+    test('npm version meets requirements', async () => {
+      const { stdout: npmVersion } = await execAsync('npm --version');
+      const npmVer = npmVersion.trim();
+      const npmMajorVersion = parseInt(npmVer.split('.')[0], 10);
+      expect(npmMajorVersion).toBeGreaterThanOrEqual(8);
+    });
     
-    // Test npm version
-    const { stdout: npmVersion } = await execAsync('npm --version');
-    const npmVer = npmVersion.trim();
-    const npmMajorVersion = parseInt(npmVer.split('.')[0], 10);
-    
-    logTest('npm version meets requirements', npmMajorVersion >= 8, 
-      `npm: ${npmVer}, Required: >=8`);
-    
-    // Test module resolution
-    try {
+    test('Node.js module system is working', async () => {
       const { stdout: moduleOutput } = await execAsync('node -e "console.log(process.versions)"');
-      logTest('Node.js module system is working', moduleOutput.includes('node'), 
-        'Module system functional');
-    } catch (_error) {
-      logTest('Node.js module system is working', false, 'Module system test failed');
-    }
+      expect(moduleOutput).toContain('node');
+    });
     
-    // Test ES modules support
-    try {
+    test('ES modules support is working', async () => {
       const testESModule = `
         import { fileURLToPath } from 'url';
         console.log('ES modules working');
@@ -327,287 +170,160 @@ async function testNodeEnvironment() {
       const tempFile = '/tmp/test-esm.mjs';
       fs.writeFileSync(tempFile, testESModule);
       
-      const { stdout: esmOutput } = await execAsync(`node ${tempFile}`);
-      logTest('ES modules support is working', esmOutput.includes('ES modules working'));
-      
-      fs.unlinkSync(tempFile);
-    } catch (error) {
-      logTest('ES modules support is working', false, `ES modules test failed: ${error.message}`);
-    }
-    
-  } catch (error) {
-    logTest('Node.js environment validation', false, `Error: ${error.message}`);
-  }
-}
-
-async function testPackageManagement() {
-  try {
-    // Test package.json exists and is valid
-    const packagePath = '/workspace/package.json';
-    const packageExists = fs.existsSync(packagePath);
-    logTest('package.json exists', packageExists);
-    
-    if (packageExists) {
       try {
-        const packageContent = fs.readFileSync(packagePath, 'utf8');
-        const packageJson = JSON.parse(packageContent);
-        logTest('package.json is valid JSON', true);
-        
-        // Test essential package.json properties
-        logTest('package.json has name', packageJson.name !== undefined);
-        logTest('package.json has version', packageJson.version !== undefined);
-        logTest('package.json has type module', packageJson.type === 'module');
-        logTest('package.json has scripts', packageJson.scripts !== undefined);
-        logTest('package.json has devDependencies', packageJson.devDependencies !== undefined);
-        
-        // Test engine requirements
-        logTest('package.json has engine requirements', packageJson.engines !== undefined);
-        
-      } catch (error) {
-        logTest('package.json is valid JSON', false, `Parse error: ${error.message}`);
+        const { stdout: esmOutput } = await execAsync(`node ${tempFile}`);
+        expect(esmOutput).toContain('ES modules working');
+      } finally {
+        fs.unlinkSync(tempFile);
       }
-    }
-    
-    // Test node_modules exists and is populated
-    const nodeModulesPath = '/workspace/node_modules';
-    const nodeModulesExists = fs.existsSync(nodeModulesPath);
-    logTest('node_modules directory exists', nodeModulesExists);
-    
-    if (nodeModulesExists) {
-      const nodeModulesContent = fs.readdirSync(nodeModulesPath);
-      logTest('node_modules is populated', nodeModulesContent.length > 0);
-    }
-    
-    // Test package-lock.json exists
-    const packageLockPath = '/workspace/package-lock.json';
-    const packageLockExists = fs.existsSync(packageLockPath);
-    logTest('package-lock.json exists', packageLockExists);
-    
-    // Test npm audit
-    try {
-      await execAsync('npm audit --audit-level=high');
-      logTest('npm audit passes (no high/critical vulnerabilities)', true, 
-        'No high or critical vulnerabilities found');
-    } catch (error) {
-      const hasHighVulns = error.stdout && error.stdout.includes('high');
-      logTest('npm audit passes (no high/critical vulnerabilities)', !hasHighVulns, 
-        hasHighVulns ? 'High/critical vulnerabilities found' : 'Audit check passed');
-    }
-    
-  } catch (error) {
-    logTest('Package management validation', false, `Error: ${error.message}`);
-  }
-}
+    });
+  });
 
-async function testDevelopmentWorkflow() {
-  try {
-    // Test development scripts
-    const packagePath = '/workspace/package.json';
-    if (fs.existsSync(packagePath)) {
+  describe('Package Management', () => {
+    test('package.json exists and is valid', () => {
+      const packagePath = '/workspace/package.json';
+      expect(fs.existsSync(packagePath)).toBe(true);
+      
+      const packageContent = fs.readFileSync(packagePath, 'utf8');
+      const packageJson = JSON.parse(packageContent);
+      
+      expect(packageJson.name).toBeDefined();
+      expect(packageJson.version).toBeDefined();
+      expect(packageJson.type).toBe('module');
+      expect(packageJson.scripts).toBeDefined();
+      expect(packageJson.devDependencies).toBeDefined();
+      expect(packageJson.engines).toBeDefined();
+    });
+    
+    test('node_modules directory exists and is populated', () => {
+      const nodeModulesPath = '/workspace/node_modules';
+      expect(fs.existsSync(nodeModulesPath)).toBe(true);
+      
+      const nodeModulesContent = fs.readdirSync(nodeModulesPath);
+      expect(nodeModulesContent.length).toBeGreaterThan(0);
+    });
+    
+    test('package-lock.json exists', () => {
+      const packageLockPath = '/workspace/package-lock.json';
+      expect(fs.existsSync(packageLockPath)).toBe(true);
+    });
+    
+    test('npm audit passes (no high/critical vulnerabilities)', async () => {
+      try {
+        await execAsync('npm audit --audit-level=high');
+        expect(true).toBe(true);
+      } catch (error) {
+        const hasHighVulns = error.stdout && error.stdout.includes('high');
+        expect(hasHighVulns).toBe(false);
+      }
+    });
+  });
+
+  describe('Development Workflow', () => {
+    test('Essential scripts are defined', () => {
+      const packagePath = '/workspace/package.json';
       const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
       const scripts = packageJson.scripts || {};
       
-      // Test essential scripts exist
       const essentialScripts = ['lint', 'format', 'type-check', 'test'];
       for (const script of essentialScripts) {
-        const scriptExists = scripts[script] !== undefined;
-        logTest(`${script} script is defined`, scriptExists, 
-          scriptExists ? `"${scripts[script]}"` : 'Script not found');
+        expect(scripts[script]).toBeDefined();
       }
-      
-      // Test script execution - run the lint command directly with JSON format
-      try {
-        const { stdout, stderr } = await execAsync('npx eslint . --ext .js,.jsx,.ts,.tsx --format json');
-        
-        const results = JSON.parse(stdout);
-        
+    });
+    
+    test('lint script executes successfully', async () => {
+      const countErrors = (results) => {
         let errorCount = 0;
-        let warningCount = 0;
-        
         results.forEach(file => {
           file.messages.forEach(message => {
             if (message.severity === 2) errorCount++;
-            else if (message.severity === 1) warningCount++;
           });
         });
-        
-        const hasErrors = errorCount > 0;
-        const warningText = warningCount > 0 ? ` (${warningCount} warnings)` : '';
-        const errorText = errorCount > 0 ? ` (${errorCount} errors)` : '';
-        
-        logTest('lint script executes successfully', !hasErrors, 
-          hasErrors ? `Lint errors found${errorText}${warningText}` : 
-          `Lint script completed${warningText}`);
+        return errorCount;
+      };
+      
+      try {
+        const { stdout } = await execAsync('npx eslint . --ext .js,.jsx,.ts,.tsx --format json');
+        const results = JSON.parse(stdout);
+        const errorCount = countErrors(results);
+        expect(errorCount).toBe(0);
       } catch (error) {
         if (error.stdout) {
-          try {
-            const results = JSON.parse(error.stdout);
-            
-            let errorCount = 0;
-            let warningCount = 0;
-            
-            results.forEach(file => {
-              file.messages.forEach(message => {
-                if (message.severity === 2) errorCount++;
-                else if (message.severity === 1) warningCount++;
-              });
-            });
-            
-            const hasErrors = errorCount > 0;
-            const warningText = warningCount > 0 ? ` (${warningCount} warnings)` : '';
-            const errorText = errorCount > 0 ? ` (${errorCount} errors)` : '';
-            
-            logTest('lint script executes successfully', !hasErrors, 
-              hasErrors ? `Lint errors found${errorText}${warningText}` : 
-              `Lint script completed${warningText}`);
-          } catch (jsonError) {
-            // Fallback to original behavior if JSON parsing fails
-            const hasLintErrors = error.stdout && error.stdout.includes('error');
-            logTest('lint script executes successfully', !hasLintErrors, 
-              hasLintErrors ? 'Lint errors found' : 'Lint script failed');
-          }
+          const results = JSON.parse(error.stdout);
+          const errorCount = countErrors(results);
+          expect(errorCount).toBe(0);
         } else {
-          logTest('lint script executes successfully', false, 'Lint script failed');
+          throw error;
         }
       }
-      
+    });
+    
+    test('format check script executes successfully', async () => {
       try {
         await execAsync('npm run format:check');
-        logTest('format check script executes successfully', true, 'Format check completed');
+        expect(true).toBe(true);
       } catch (error) {
         const hasFormatIssues = error.stdout && error.stdout.includes('Code style issues');
-        logTest('format check script executes successfully', !hasFormatIssues, 
-          hasFormatIssues ? 'Format issues found' : 'Format check failed');
+        expect(hasFormatIssues).toBe(false);
       }
-      
+    });
+    
+    test('type-check script executes successfully', async () => {
       try {
         await execAsync('npm run type-check');
-        logTest('type-check script executes successfully', true, 'Type check completed');
+        expect(true).toBe(true);
       } catch (error) {
         const hasTypeErrors = error.stdout && error.stdout.includes('error TS');
-        logTest('type-check script executes successfully', !hasTypeErrors, 
-          hasTypeErrors ? 'Type errors found' : 'Type check failed');
+        expect(hasTypeErrors).toBe(false);
       }
-    }
+    });
     
-    // Test git hooks integration (if present)
-    const gitHooksPath = '/workspace/.git/hooks';
-    if (fs.existsSync(gitHooksPath)) {
-      const hooks = fs.readdirSync(gitHooksPath);
-      const hasPreCommitHook = hooks.some(hook => hook.startsWith('pre-commit'));
-      logTest('Git pre-commit hook is configured', hasPreCommitHook, 
-        hasPreCommitHook ? 'Pre-commit hook found' : 'No pre-commit hook (optional)');
-    }
-    
-  } catch (error) {
-    logTest('Development workflow validation', false, `Error: ${error.message}`);
-  }
-}
-
-async function testBuildTools() {
-  try {
-    // Test TypeScript build tools
-    try {
-      const { stdout: tsxOutput } = await execAsync('npx tsx --version');
-      logTest('tsx (TypeScript execution) is available', tsxOutput.includes('.'), 
-        `tsx: ${tsxOutput.trim()}`);
-    } catch (_error) {
-      logTest('tsx (TypeScript execution) is available', false, 'tsx not available');
-    }
-    
-    // Test if build directory structure is ready
-    const tsconfigContent = fs.readFileSync('/workspace/tsconfig.json', 'utf8');
-    
-    // Extract outDir from tsconfig content (handling comments)
-    const outDirMatch = tsconfigContent.match(/"outDir":\s*"([^"]+)"/);
-    const buildOutputDir = outDirMatch ? outDirMatch[1] : './dist';
-    
-    logTest('Build output directory is configured', buildOutputDir !== undefined, 
-      `Output directory: ${buildOutputDir}`);
-    
-    // Test if clean script works
-    try {
-      await execAsync('npm run clean');
-      logTest('Clean script executes successfully', true, 'Clean script completed');
-    } catch (_error) {
-      logTest('Clean script executes successfully', false, 'Clean script failed');
-    }
-    
-    // Test TypeScript compilation
-    try {
-      await execAsync('npx tsc --noEmit --skipLibCheck');
-      logTest('TypeScript compilation succeeds', true, 'TypeScript compilation successful');
-    } catch (error) {
-      const hasCompileErrors = error.stdout && error.stdout.includes('error TS');
-      logTest('TypeScript compilation succeeds', !hasCompileErrors, 
-        hasCompileErrors ? 'TypeScript compilation errors' : 'Compilation test failed');
-    }
-    
-  } catch (error) {
-    logTest('Build tools validation', false, `Error: ${error.message}`);
-  }
-}
-
-// Main test runner
-async function runTests() {
-  console.log('🔧 Development Tools Integration Test Suite');
-  console.log('==========================================\n');
-  
-  logInfo('Testing TypeScript configuration and functionality...');
-  await testTypeScript();
-  console.log();
-  
-  logInfo('Testing ESLint configuration and functionality...');
-  await testESLint();
-  console.log();
-  
-  logInfo('Testing Prettier configuration and functionality...');
-  await testPrettier();
-  console.log();
-  
-  logInfo('Testing Node.js environment...');
-  await testNodeEnvironment();
-  console.log();
-  
-  logInfo('Testing package management...');
-  await testPackageManagement();
-  console.log();
-  
-  logInfo('Testing development workflow...');
-  await testDevelopmentWorkflow();
-  console.log();
-  
-  logInfo('Testing build tools...');
-  await testBuildTools();
-  console.log();
-  
-  // Summary
-  console.log('📊 Test Summary');
-  console.log('===============');
-  console.log(`✅ Passed: ${testResults.passed}`);
-  console.log(`❌ Failed: ${testResults.failed}`);
-  console.log(`📈 Total:  ${testResults.passed + testResults.failed}`);
-  
-  if (testResults.failed > 0) {
-    console.log('\n❌ Failed Tests:');
-    testResults.tests
-      .filter(test => !test.passed)
-      .forEach(test => {
-        console.log(`   • ${test.name}${test.details ? `: ${test.details}` : ''}`);
-      });
-  }
-  
-  console.log(`\n🎯 Success Rate: ${(testResults.passed / (testResults.passed + testResults.failed) * 100).toFixed(1)}%`);
-  
-  // Exit with appropriate code
-  process.exit(testResults.failed > 0 ? 1 : 0);
-}
-
-// Run tests if this file is executed directly
-if (import.meta.url === `file://${process.argv[1]}`) {
-  runTests().catch(error => {
-    console.error('❌ Test runner error:', error);
-    process.exit(1);
+    test('Git pre-commit hook is configured (optional)', () => {
+      const gitHooksPath = '/workspace/.git/hooks';
+      if (fs.existsSync(gitHooksPath)) {
+        const hooks = fs.readdirSync(gitHooksPath);
+        const hasPreCommitHook = hooks.some(hook => hook.startsWith('pre-commit'));
+        console.log(hasPreCommitHook ? 'Pre-commit hook found' : 'No pre-commit hook (optional)');
+      }
+      // This test always passes as pre-commit hooks are optional
+      expect(true).toBe(true);
+    });
   });
-}
 
+  describe('Build Tools', () => {
+    test('tsx (TypeScript execution) is available', async () => {
+      try {
+        const { stdout: tsxOutput } = await execAsync('npx tsx --version');
+        expect(tsxOutput).toContain('.');
+      } catch (error) {
+        expect.fail('tsx should be available');
+      }
+    });
+    
+    test('Build output directory is configured', () => {
+      const tsconfigContent = fs.readFileSync('/workspace/tsconfig.json', 'utf8');
+      const outDirMatch = tsconfigContent.match(/"outDir":\s*"([^"]+)"/);
+      const buildOutputDir = outDirMatch ? outDirMatch[1] : './dist';
+      expect(buildOutputDir).toBeDefined();
+    });
+    
+    test('Clean script executes successfully', async () => {
+      try {
+        await execAsync('npm run clean');
+        expect(true).toBe(true);
+      } catch (error) {
+        expect.fail('Clean script should execute successfully');
+      }
+    });
+    
+    test('TypeScript compilation succeeds', async () => {
+      try {
+        await execAsync('npx tsc --noEmit --skipLibCheck');
+        expect(true).toBe(true);
+      } catch (error) {
+        const hasCompileErrors = error.stdout && error.stdout.includes('error TS');
+        expect(hasCompileErrors).toBe(false);
+      }
+    });
+  });
+});

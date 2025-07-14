@@ -13,7 +13,7 @@ import { fileURLToPath } from 'url';
 import { spawn } from 'child_process';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const projectRoot = path.resolve(__dirname, '../..');
+const projectRoot = path.resolve(__dirname, '../../..');
 const dockerfilePath = path.join(projectRoot, '.devcontainer', 'Dockerfile');
 
 // Test utilities

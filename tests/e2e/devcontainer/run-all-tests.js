@@ -7,11 +7,11 @@ import path from 'path';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const tests = [
-  'test-devcontainer-config.js',
-  'test-dockerfile-validation.js',
-  'test-runtime-environment.js',
-  'test-development-tools.js',
-  'test-port-forwarding.js'
+  '../../unit/devcontainer/devcontainer-config.test.js',
+  '../../unit/devcontainer/dockerfile-validation.test.js',
+  '../../unit/devcontainer/runtime-environment.test.js',
+  '../../integration/devcontainer/development-tools.test.js',
+  '../../integration/devcontainer/port-forwarding.test.js'
 ];
 
 const runTest = (testFile) => {

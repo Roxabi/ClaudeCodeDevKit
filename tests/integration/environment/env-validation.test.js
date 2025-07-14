@@ -60,7 +60,7 @@ const optionalEnvVars = [
 console.log(chalk.blue.bold('🔍 Environment Variables Validation\n'));
 
 // Check if .env file exists
-const envPath = path.join(__dirname, '.env');
+const envPath = path.join(__dirname, '../../../.env');
 if (!fs.existsSync(envPath)) {
   console.error(chalk.red('❌ .env file not found!'));
   process.exit(1);

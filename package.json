@@ -7,8 +7,11 @@
   "scripts": {
     "dev": "echo 'Add your development server command here'",
     "build": "echo 'Add your build command here'",
-    "test": "echo 'Add your test command here'",
-    "test:watch": "echo 'Add your test watch command here'",
+    "test": "node tests/test-services.js",
+    "test:container": "node tests/test-container-ips.js",
+    "test:host": "node tests/test-host-services.js",
+    "test:devcontainer": "node tests/test-devcontainer-config.js",
+    "test:all": "node tests/test-services.js && node tests/test-container-ips.js && node tests/test-host-services.js && node tests/test-devcontainer-config.js",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "format": "prettier --write .",

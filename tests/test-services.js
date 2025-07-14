@@ -8,7 +8,6 @@
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import http from 'http';
-import https from 'https';
 import net from 'net';
 
 const execAsync = promisify(exec);
@@ -105,7 +104,7 @@ const testPostgreSQL = async () => {
 
     // Test with psql command if available
     try {
-      const { stdout, stderr } = await execAsync(
+      const { stdout } = await execAsync(
         `PGPASSWORD=${services.postgres.password} psql -h ${services.postgres.host} -p ${services.postgres.port} -U ${services.postgres.username} -d ${services.postgres.database} -c "SELECT version();"`,
         { timeout: 10000 }
       );

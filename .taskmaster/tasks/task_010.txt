@@ -1,0 +1,11 @@
+# Task ID: 10
+# Title: Implement Security Scanner Script
+# Status: pending
+# Dependencies: 8
+# Priority: high
+# Description: Create security scanner for dangerous commands and secret detection
+# Details:
+Create scripts/security-scanner.sh that scans for dangerous patterns like 'rm -rf', API keys, secrets, and suspicious commands. Implement pattern matching for common security vulnerabilities and block execution of dangerous commands. Protect sensitive directories and files.
+
+# Test Strategy:
+Test security scanner with various dangerous command patterns and verify it correctly blocks malicious commands while allowing safe development operations

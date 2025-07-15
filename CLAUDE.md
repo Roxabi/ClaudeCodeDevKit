@@ -5,6 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project Overview
 
 This is a **development environment template** featuring:
+
 - Standardized devcontainer setup for team consistency
 - Comprehensive test suite with Vitest
 - Task Master AI integration for project management
@@ -42,6 +43,7 @@ This is a **development environment template** featuring:
 ### Quality Assurance
 
 Before considering any task complete, run these validation commands:
+
 ```bash
 npm run lint          # Check code style and quality
 npm run type-check    # Verify TypeScript types
@@ -64,11 +66,13 @@ npm run format:check # Verify code formatting
 This repository includes a comprehensive test suite organized into three categories:
 
 **Test Structure:**
+
 - **Unit Tests**: `tests/unit/` - Test individual components and configurations
 - **Integration Tests**: `tests/integration/` - Test component interactions and services
 - **E2E Tests**: `tests/e2e/` - End-to-end testing scenarios
 
 **Available Test Commands:**
+
 ```bash
 # Run all tests
 npm test
@@ -81,6 +85,7 @@ npm run test:coverage
 ```
 
 **Test Coverage:**
+
 - Devcontainer configuration validation
 - Docker environment setup
 - Service availability and connectivity
@@ -134,10 +139,12 @@ This repository serves as a development environment template rather than a speci
 Essential commands available via `npm run`:
 
 **Development:**
+
 - `npm run dev` - Start development server (placeholder)
 - `npm run build` - Build project (placeholder)
 
 **Code Quality:**
+
 - `npm run lint` - Run ESLint checks
 - `npm run lint:fix` - Auto-fix ESLint issues
 - `npm run format` - Format code with Prettier
@@ -145,11 +152,13 @@ Essential commands available via `npm run`:
 - `npm run type-check` - TypeScript type checking
 
 **Testing:**
+
 - `npm test` - Run all tests
 - `npm run test:watch` - Run tests in watch mode
 - `npm run test:coverage` - Run tests with coverage report
 
 **Utilities:**
+
 - `npm run clean` - Clean build artifacts
 - `npm run setup` - Install, format, and lint
 - `npm run docker:up` - Start Docker services

@@ -24,9 +24,10 @@ export default [
     ],
   },
 
-  // TypeScript files configuration
+  // Backend TypeScript files configuration
   {
-    files: ['**/*.ts', '**/*.tsx'],
+    files: ['src/backend/**/*.ts', '**/*.ts', '**/*.tsx'],
+    ignores: ['src/frontend/**/*.ts'],
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
@@ -35,6 +36,49 @@ export default [
       },
       globals: {
         ...globals.node,
+        ...globals.es2022,
+      },
+    },
+    plugins: {
+      '@typescript-eslint': typescript,
+    },
+    rules: {
+      // TypeScript specific rules (without type-checking rules)
+      ...(typescript.configs['recommended']?.rules ?? {}),
+
+      // Custom TypeScript rules
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'warn',
+      '@typescript-eslint/consistent-type-imports': [
+        'error',
+        {
+          prefer: 'type-imports',
+          disallowTypeAnnotations: true,
+        },
+      ],
+    },
+  },
+
+  // Frontend TypeScript files configuration
+  {
+    files: ['src/frontend/**/*.ts', 'src/frontend/**/*.tsx'],
+    languageOptions: {
+      parser: typescriptParser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
+      globals: {
+        ...globals.browser,
         ...globals.es2022,
       },
     },
@@ -205,7 +249,13 @@ export default [
 
   // Test files configuration
   {
-    files: ['**/*.test.ts', '**/*.test.js', '**/*.spec.ts', '**/*.spec.js', 'tests/**/*.js'],
+    files: [
+      '**/*.test.ts',
+      '**/*.test.js',
+      '**/*.spec.ts',
+      '**/*.spec.js',
+      'tests/**/*.js',
+    ],
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
       'no-console': 'off',

@@ -1,0 +1,37 @@
+# Task ID: 4
+# Title: Create Basic Project Structure
+# Status: in-progress
+# Dependencies: 1, 2
+# Priority: medium
+# Description: Set up src directory with separate frontend and backend subdirectories to accommodate future expansion
+# Details:
+Create src/ directory with frontend/ and backend/ subdirectories to establish clear separation of concerns. Add placeholder files in each subdirectory to demonstrate the structure and prepare for future development. The structure should be extensible to accommodate additional folders like shared/, utils/, or services/ as the project grows.
+
+# Test Strategy:
+Validate project structure by checking directory creation, verifying placeholder files exist, and ensuring the structure supports both frontend and backend development patterns
+
+# Subtasks:
+## 1. Create src directory structure [done]
+### Dependencies: None
+### Description: Create main src/ directory with frontend/ and backend/ subdirectories
+### Details:
+Set up the basic directory structure under src/ with separate folders for frontend and backend development
+
+## 2. Add frontend placeholder files [in-progress]
+### Dependencies: None
+### Description: Create placeholder TypeScript files in src/frontend/ directory
+### Details:
+Add index.ts and basic component structure files to demonstrate frontend development setup
+
+## 3. Add backend placeholder files [in-progress]
+### Dependencies: None
+### Description: Create placeholder TypeScript files in src/backend/ directory
+### Details:
+Add server.ts and basic API structure files to demonstrate backend development setup
+
+## 4. Create shared types directory [pending]
+### Dependencies: None
+### Description: Set up types/ directory structure for shared type definitions
+### Details:
+Create types/ directory that can be accessed by both frontend and backend with shared interface definitions
+

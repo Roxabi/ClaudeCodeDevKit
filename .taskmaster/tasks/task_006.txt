@@ -1,0 +1,11 @@
+# Task ID: 6
+# Title: Verify Docker Services Integration
+# Status: done
+# Dependencies: 3
+# Priority: high
+# Description: Test Docker services startup and connectivity from development environment, with special consideration for dev container environment where external Docker daemon from host system should be used
+# Details:
+Test 'npm run docker:up' starts all services (PostgreSQL, Redis, MailHog, MinIO) successfully from within the dev container environment. Verify that the dev container can access Docker services running on the host system's Docker daemon (not Docker-in-Docker). Test connectivity to each service from the development environment, including database connection, Redis cache operations, MailHog email testing, and MinIO object storage access. Include detection of dev container environment and use appropriate Docker commands accordingly.
+
+# Test Strategy:
+Create connection test scripts for each service and verify they can connect successfully from within the dev container. Test service health endpoints and basic operations for each service. Include checks to detect if running in dev container environment and verify Docker daemon accessibility from container to host system

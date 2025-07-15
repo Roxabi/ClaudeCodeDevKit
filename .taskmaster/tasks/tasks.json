@@ -39,16 +39,53 @@
       {
         "id": 4,
         "title": "Create Basic Project Structure",
-        "description": "Set up src directory with example TypeScript files and type definitions",
-        "details": "Create src/ directory with index.ts as entry point and types/ subdirectory for type definitions. Add example TypeScript code that demonstrates imports, exports, and type usage. Create basic Express.js server setup or similar framework integration to validate the development environment.",
-        "testStrategy": "Validate project structure by running TypeScript compilation, linting, and executing the example code to ensure all tooling works together",
-        "priority": "medium",
+        "description": "Set up src directory with separate frontend and backend subdirectories to accommodate future expansion",
+        "status": "done",
         "dependencies": [
           1,
           2
         ],
-        "status": "pending",
-        "subtasks": []
+        "priority": "medium",
+        "details": "Create src/ directory with frontend/ and backend/ subdirectories to establish clear separation of concerns. Add placeholder files in each subdirectory to demonstrate the structure and prepare for future development. The structure should be extensible to accommodate additional folders like shared/, utils/, or services/ as the project grows.",
+        "testStrategy": "Validate project structure by checking directory creation, verifying placeholder files exist, and ensuring the structure supports both frontend and backend development patterns",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create src directory structure",
+            "description": "Create main src/ directory with frontend/ and backend/ subdirectories",
+            "status": "done",
+            "dependencies": [],
+            "details": "Set up the basic directory structure under src/ with separate folders for frontend and backend development",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Add frontend placeholder files",
+            "description": "Create placeholder TypeScript files in src/frontend/ directory",
+            "status": "done",
+            "dependencies": [],
+            "details": "Add index.ts and basic component structure files to demonstrate frontend development setup",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Add backend placeholder files",
+            "description": "Create placeholder TypeScript files in src/backend/ directory",
+            "status": "done",
+            "dependencies": [],
+            "details": "Add server.ts and basic API structure files to demonstrate backend development setup",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Create shared types directory",
+            "description": "Set up types/ directory structure for shared type definitions",
+            "status": "done",
+            "dependencies": [],
+            "details": "Create types/ directory that can be accessed by both frontend and backend with shared interface definitions",
+            "testStrategy": ""
+          }
+        ]
       },
       {
         "id": 5,
@@ -162,19 +199,6 @@
         "subtasks": []
       },
       {
-        "id": 13,
-        "title": "Create Backup Manager Script",
-        "description": "Develop backup and versioning system for critical files",
-        "details": "Create scripts/backup-manager.sh that creates snapshots of critical files and configurations. Implement versioning for important changes and provide rollback capabilities. Focus on devcontainer configurations, source code, and environment files.",
-        "testStrategy": "Test backup manager by creating snapshots and verifying rollback functionality works correctly for different file types and configurations",
-        "priority": "medium",
-        "dependencies": [
-          8
-        ],
-        "status": "pending",
-        "subtasks": []
-      },
-      {
         "id": 14,
         "title": "Implement Audit Logger Script",
         "description": "Create comprehensive logging system for Claude Code actions",
@@ -201,7 +225,6 @@
           10,
           11,
           12,
-          13,
           14
         ],
         "status": "pending",
@@ -281,139 +304,11 @@
         ],
         "status": "pending",
         "subtasks": []
-      },
-      {
-        "id": 21,
-        "title": "Create comprehensive devcontainer environment test suite",
-        "description": "Develop a complete test suite to validate the .devcontainer environment configuration, build process, and runtime functionality to ensure consistent development environment setup across team members.",
-        "details": "## Overview\nCreate a comprehensive test suite that validates all aspects of the devcontainer environment to ensure proper configuration, build process, and runtime functionality.\n\n## Implementation Plan\n\n### Phase 1: Configuration Analysis & Strategy\n1. **Analyze existing .devcontainer configuration structure**\n   - Examine `devcontainer.json` settings and features\n   - Review `Dockerfile` build process and dependencies\n   - Assess `init-firewall.sh` security script\n\n2. **Design test strategy for devcontainer environment validation**\n   - Define testable aspects of the devcontainer environment\n   - Determine test execution context (inside vs outside container)\n   - Plan integration with existing test infrastructure\n\n### Phase 2: Core Environment Tests\n3. **Create test for devcontainer.json configuration validation**\n   - Validate JSON schema and required properties\n   - Test feature installations and configurations\n   - Verify settings and customizations\n\n4. **Create test for Dockerfile build and environment setup**\n   - Test image build process\n   - Validate installed packages and tools\n   - Check user permissions and directory structure\n\n5. **Create test for workspace mounting and permissions**\n   - Verify `/workspace` mount point accessibility\n   - Test file ownership and permissions\n   - Validate persistent volume configurations\n\n6. **Create test for environment variables and user configuration**\n   - Test user account setup (`node` user)\n   - Verify environment variable availability\n   - Check shell configuration and PATH\n\n### Phase 3: Advanced Features\n7. **Create test for port forwarding configuration**\n   - Test automatic port forwarding (3000, 8080, etc.)\n   - Validate port accessibility from host\n\n8. **Create test for VSCode extensions and settings**\n   - Verify extension installation\n   - Test workspace settings application\n\n9. **Create test for firewall initialization script**\n   - Test firewall rules application\n   - Verify network security restrictions\n\n### Phase 4: Integration\n10. **Create comprehensive devcontainer test suite runner**\n    - Integrate all devcontainer tests into unified suite\n    - Add reporting and error handling\n    - Document test execution procedures\n\n## Technical Requirements\n- Test files should be placed in `/workspace/tests/devcontainer/`\n- Use Node.js with ES modules (consistent with existing test structure)\n- Include both unit tests (individual components) and integration tests\n- Follow existing test patterns from `test-services.js`\n- Provide clear pass/fail reporting with detailed error messages\n\n## Success Criteria\n- All devcontainer configuration aspects are tested\n- Tests can run both inside and outside the container\n- Clear documentation for running and interpreting tests\n- Integration with existing test infrastructure\n- Comprehensive error reporting and debugging information",
-        "testStrategy": "",
-        "status": "pending",
-        "dependencies": [],
-        "priority": "high",
-        "subtasks": [
-          {
-            "id": 1,
-            "title": "Create devcontainer.json configuration validation tests",
-            "description": "Test devcontainer.json syntax, required fields, extensions, and configuration settings [Updated: 7/14/2025]",
-            "dependencies": [],
-            "details": "Create test suite to validate devcontainer.json structure including JSON syntax validation, required properties (name, image, features), extension ID verification, port forwarding configuration, and mount point validation. Include negative test cases for malformed JSON and missing required fields.\n<info added on 2025-07-14T09:21:59.371Z>\nPriority set to high - this is foundational configuration validation that other tests depend on\n</info added on 2025-07-14T09:21:59.371Z>",
-            "status": "done",
-            "testStrategy": ""
-          },
-          {
-            "id": 2,
-            "title": "Create Dockerfile build process validation tests",
-            "description": "Test Docker image build process, dependencies, and layer construction [Updated: 7/14/2025]",
-            "dependencies": [],
-            "details": "Develop tests to validate Dockerfile build process including base image availability, package installation verification, user creation and permissions, working directory setup, and build time validation. Test both successful builds and common failure scenarios.\n<info added on 2025-07-14T09:22:10.105Z>\nPriority set to high due to critical importance of Dockerfile validation for container build process reliability and development environment stability.\n</info added on 2025-07-14T09:22:10.105Z>\n<info added on 2025-07-14T10:29:51.128Z>\nImplementation completed successfully with comprehensive test coverage. Created test-dockerfile-validation.js with 15 test cases covering all critical aspects of the Dockerfile build process including file validation, syntax checking, base image verification, package installation, user configuration, environment setup, security configurations, development tools, workspace setup, and Docker daemon availability. All tests pass and follow existing codebase patterns with proper async handling and error management. Test suite provides thorough validation of Dockerfile build reliability and development environment stability.\n</info added on 2025-07-14T10:29:51.128Z>",
-            "status": "done",
-            "testStrategy": ""
-          },
-          {
-            "id": 3,
-            "title": "Create firewall initialization script tests",
-            "description": "Test init-firewall.sh security script execution and network restrictions",
-            "dependencies": [],
-            "details": "Create test suite for init-firewall.sh script validation including script execution permissions, iptables rules verification, network restriction testing, and security policy enforcement. Validate that the script prevents unauthorized network access while allowing legitimate development traffic.\n<info added on 2025-07-14T09:22:22.634Z>\nPriority set to high due to critical security implications. Security testing is essential for preventing data exfiltration and maintaining proper security boundaries in the development environment.\n</info added on 2025-07-14T09:22:22.634Z>\n<info added on 2025-07-14T10:34:35.628Z>\nImplementation completed successfully with comprehensive test coverage. Created test-firewall-validation.js with 15 test cases covering all critical aspects of the firewall initialization script including script existence, permissions, syntax validation, WSL2 detection, iptables capability checks, required commands availability, GitHub API access, DNS resolution, firewall rules creation, ipset creation, domain access controls, localhost configuration, script exit codes, and firewall verification. The test suite properly handles different environments (WSL2, containers with/without iptables capabilities) and provides clear reporting with 9 tests passing and 6 failing in the current environment - which is expected behavior in WSL2/restricted container environments. The test suite follows existing codebase patterns with proper async handling and error management, providing thorough validation of firewall script security functionality and network restrictions.\n</info added on 2025-07-14T10:34:35.628Z>",
-            "status": "done",
-            "testStrategy": ""
-          },
-          {
-            "id": 4,
-            "title": "Create container runtime environment tests",
-            "description": "Test container startup, user permissions, and workspace mounting",
-            "dependencies": [
-              "21.1",
-              "21.2"
-            ],
-            "details": "Develop tests to validate container runtime environment including user permissions (node user), workspace mounting at /workspace, environment variables, timezone configuration, and persistent volume mounting for .claude config and bash history.\n<info added on 2025-07-14T09:22:33.919Z>\nPriority upgraded to high - Runtime environment validation is essential for ensuring the container works correctly after build and is critical for the overall devcontainer functionality.\n</info added on 2025-07-14T09:22:33.919Z>\n<info added on 2025-07-14T10:43:36.235Z>\nImplementation completed successfully with comprehensive test coverage. Created test-runtime-environment.js with 33 test cases covering all critical aspects of container runtime environment including user permissions (node user validation), workspace mounting and permissions, environment variables configuration, persistent volume mounting (Claude config and command history), shell configuration (zsh/bash setup), Node.js environment setup, Docker access validation, and system resources accessibility. All tests pass with 100% success rate, demonstrating proper container runtime environment setup. The test suite follows existing codebase patterns with proper async handling, error management, and comprehensive reporting. Test file is executable and ready for continuous integration.\n</info added on 2025-07-14T10:43:36.235Z>",
-            "status": "done",
-            "testStrategy": ""
-          },
-          {
-            "id": 5,
-            "title": "Create development tools integration tests",
-            "description": "Test TypeScript, ESLint, and other development tools functionality",
-            "dependencies": [
-              "21.4"
-            ],
-            "details": "Create comprehensive tests for development tools integration including TypeScript compilation, ESLint configuration, Node.js version verification, npm/yarn availability, and VSCode extension functionality. Test tool chain integration and common development workflows.\n<info added on 2025-07-14T09:22:45.413Z>\nPriority updated to medium - Development tools testing is important but not critical for basic container functionality\n</info added on 2025-07-14T09:22:45.413Z>\n<info added on 2025-07-14T10:53:38.070Z>\nTask 21.5 successfully completed with comprehensive test coverage. Created test-development-tools.js containing 48 test cases covering TypeScript compiler availability and configuration validation, ESLint configuration and functionality, Prettier formatting, Node.js environment compatibility, package management, development workflow scripts, and build tools integration. Test suite achieved 93.8% success rate (45 passed, 3 failed) with failures being expected ESLint errors in test files demonstrating proper linting functionality. Tests validate tsconfig.json structure, ESLint configuration, npm scripts functionality, Node.js/npm version requirements, package.json validation, and development workflow integration. Test file is executable and ready for continuous integration.\n</info added on 2025-07-14T10:53:38.070Z>",
-            "status": "done",
-            "testStrategy": ""
-          },
-          {
-            "id": 6,
-            "title": "Create port forwarding and networking tests",
-            "description": "Test port forwarding configuration and network connectivity",
-            "dependencies": [
-              "21.3"
-            ],
-            "details": "Develop tests to validate port forwarding for development ports (3000, 8080, etc.), network connectivity within container, external network access restrictions, and service-to-service communication. Test both allowed and blocked network scenarios.\n<info added on 2025-07-14T09:22:57.668Z>\nPriority set to medium - Port forwarding is important for development workflow but not critical for basic container operation.\n</info added on 2025-07-14T09:22:57.668Z>\n<info added on 2025-07-14T11:35:03.969Z>\nSuccessfully implemented comprehensive port forwarding and networking test suite. Created tests/test-port-forwarding.js with 9 test cases covering devcontainer port configuration validation, localhost connectivity testing, port binding capabilities, container networking verification, external connectivity testing, port range availability checking, network security restrictions validation, Docker networking testing, and VSCode port forwarding integration testing. All tests pass with 100% success rate, demonstrating proper port forwarding setup and networking functionality. Test file follows existing codebase patterns with proper async handling, error management, and comprehensive reporting. Implementation is complete and ready for continuous integration.\n</info added on 2025-07-14T11:35:03.969Z>",
-            "status": "done",
-            "testStrategy": ""
-          },
-          {
-            "id": 7,
-            "title": "Create security and permissions validation tests",
-            "description": "Test container security policies, user permissions, and access controls",
-            "dependencies": [
-              "21.3"
-            ],
-            "details": "Create security test suite including non-root user validation, file system permissions, network security policies, container isolation, and privilege escalation prevention. Test security boundaries and validate that containers cannot access unauthorized resources.\n<info added on 2025-07-14T09:23:10.526Z>\n**Priority elevated to HIGH:** Security and permissions validation is critical for container security and proper isolation. This test suite forms the foundation for ensuring safe multi-user development environments and preventing privilege escalation attacks.\n</info added on 2025-07-14T09:23:10.526Z>",
-            "status": "in-progress",
-            "testStrategy": ""
-          },
-          {
-            "id": 8,
-            "title": "Create VSCode extension and feature tests",
-            "description": "Test VSCode extensions installation and functionality within devcontainer",
-            "dependencies": [
-              "21.1"
-            ],
-            "details": "Develop tests to validate VSCode extensions are properly installed and functional, including language servers, debugging capabilities, integrated terminal, and extension-specific features. Test extension marketplace access and automatic extension installation.\n<info added on 2025-07-14T09:23:21.286Z>\nPriority adjusted to low - VSCode extensions testing is nice to have but not critical for core devcontainer functionality. Can be deferred in favor of more essential infrastructure tests.\n</info added on 2025-07-14T09:23:21.286Z>",
-            "status": "pending",
-            "testStrategy": ""
-          },
-          {
-            "id": 9,
-            "title": "Create integration and end-to-end workflow tests",
-            "description": "Test complete development workflows from container startup to code execution",
-            "dependencies": [
-              "21.5",
-              "21.6",
-              "21.7",
-              "21.8"
-            ],
-            "details": "Create comprehensive end-to-end tests including container rebuild scenarios, full development workflow validation, multi-container service integration, and real-world usage patterns. Test complete developer experience from setup to code deployment.\n<info added on 2025-07-14T09:23:32.756Z>\nPriority set to medium - Integration tests are important for validating complete workflows but depend on core functionality being tested first\n</info added on 2025-07-14T09:23:32.756Z>",
-            "status": "pending",
-            "testStrategy": ""
-          },
-          {
-            "id": 10,
-            "title": "Create test infrastructure and automation setup",
-            "description": "Set up test execution framework, CI/CD integration, and automated validation",
-            "dependencies": [
-              1,
-              2,
-              3,
-              4,
-              5,
-              6,
-              7,
-              8,
-              9
-            ],
-            "details": "Establish test infrastructure including test runner configuration, automated test execution in CI/CD pipeline, test reporting and metrics, parallel test execution for performance, and integration with existing development workflows. Create test maintenance and update procedures.\n<info added on 2025-07-14T09:23:44.366Z>\nPriority adjusted to low - Test infrastructure setup can be done last after all individual tests are created and validated. This allows for proper integration testing once all component tests are established.\n</info added on 2025-07-14T09:23:44.366Z>",
-            "status": "pending",
-            "testStrategy": ""
-          }
-        ]
       }
     ],
     "metadata": {
       "created": "2025-07-14T07:43:12.578Z",
-      "updated": "2025-07-14T11:35:21.828Z",
+      "updated": "2025-07-15T06:26:07.226Z",
       "description": "Tasks for master context"
     }
   }

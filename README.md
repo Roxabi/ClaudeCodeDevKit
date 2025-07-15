@@ -238,11 +238,13 @@ Task Master is available through MCP tools with the prefix `mcp__taskmaster-ai__
 This project uses **Vitest** for comprehensive testing with three test categories:
 
 ### Test Structure
+
 - **Unit Tests**: `tests/unit/` - Individual component testing
-- **Integration Tests**: `tests/integration/` - Component interaction testing  
+- **Integration Tests**: `tests/integration/` - Component interaction testing
 - **E2E Tests**: `tests/e2e/` - End-to-end scenario testing
 
 ### Test Coverage
+
 - Devcontainer configuration validation
 - Docker environment setup verification
 - Service availability and connectivity testing

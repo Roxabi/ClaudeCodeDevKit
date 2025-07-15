@@ -2,23 +2,34 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Development Environment
+## Project Overview
 
-This repository uses a standardized development container configuration for team consistency.
+This is a **development environment template** featuring:
+- Standardized devcontainer setup for team consistency
+- Comprehensive test suite with Vitest
+- Task Master AI integration for project management
+- Security-focused configuration with network restrictions
+- Pre-configured tooling for TypeScript/JavaScript development
+
+## Development Environment
 
 **Configuration Files:**
 
 - **Container setup**: `.devcontainer/devcontainer.json`
 - **Development tools**: `.devcontainer/Dockerfile`
 - **Network security**: `.devcontainer/init-firewall.sh`
-- **Available commands**: `package.json` scripts section (includes comprehensive test suite)
+- **Package management**: `package.json` with comprehensive scripts
+- **MCP integration**: `.mcp.json` for Task Master AI tools
 
 **Key Details:**
 
-- **Base**: Node.js container with comprehensive development tooling
+- **Base**: Node.js 18+ container with development tooling
 - **User**: `node` (non-root for security)
 - **Workspace**: `/workspace` (mounted from host)
 - **Config**: `/home/node/.claude` (persistent across container rebuilds)
+- **Testing**: Vitest for unit, integration, and e2e tests
+- **Linting**: ESLint with TypeScript support
+- **Formatting**: Prettier with automatic formatting on save
 
 ## Claude Code Guidelines
 
@@ -27,6 +38,16 @@ This repository uses a standardized development container configuration for team
 - **Always use `ls -la`** instead of LS tool when doing directory listings to include hidden files
 - **Always include hidden file patterns** (`.*`, `**/.*`) in searches
 - **Remember config files** often start with "." (`.devcontainer`, `.gitignore`, `.env`, etc.)
+
+### Quality Assurance
+
+Before considering any task complete, run these validation commands:
+```bash
+npm run lint          # Check code style and quality
+npm run type-check    # Verify TypeScript types
+npm test             # Run all tests
+npm run format:check # Verify code formatting
+```
 
 ## Development Workflow
 
@@ -47,20 +68,16 @@ This repository includes a comprehensive test suite organized into three categor
 - **Integration Tests**: `tests/integration/` - Test component interactions and services
 - **E2E Tests**: `tests/e2e/` - End-to-end testing scenarios
 
-**Key Test Commands:**
+**Available Test Commands:**
 ```bash
 # Run all tests
 npm test
 
-# Run specific test categories
-npm run test:unit
-npm run test:integration
-npm run test:e2e
+# Run tests in watch mode
+npm run test:watch
 
-# Run targeted test suites
-npm run test:unit:devcontainer
-npm run test:integration:environment
-npm run test:integration:services
+# Run tests with coverage
+npm run test:coverage
 ```
 
 **Test Coverage:**
@@ -75,7 +92,7 @@ npm run test:integration:services
 
 This project uses Task Master AI for structured task management and development workflows.
 
-📖 **Complete documentation**: [Task Master MCP Guide](.docs/mcp/taskmaster.md)
+📖 **Complete documentation**: [Task Master MCP Guide](docs/mcp/taskmaster.md)
 
 ### Quick Start
 
@@ -112,4 +129,30 @@ This repository serves as a development environment template rather than a speci
 
 ---
 
-For complete Task Master documentation, commands, workflows, and troubleshooting, see [.docs/mcp/taskmaster.md](.docs/mcp/taskmaster.md).
+## Available Package Scripts
+
+Essential commands available via `npm run`:
+
+**Development:**
+- `npm run dev` - Start development server (placeholder)
+- `npm run build` - Build project (placeholder)
+
+**Code Quality:**
+- `npm run lint` - Run ESLint checks
+- `npm run lint:fix` - Auto-fix ESLint issues
+- `npm run format` - Format code with Prettier
+- `npm run format:check` - Check code formatting
+- `npm run type-check` - TypeScript type checking
+
+**Testing:**
+- `npm test` - Run all tests
+- `npm run test:watch` - Run tests in watch mode
+- `npm run test:coverage` - Run tests with coverage report
+
+**Utilities:**
+- `npm run clean` - Clean build artifacts
+- `npm run setup` - Install, format, and lint
+- `npm run docker:up` - Start Docker services
+- `npm run ccusage` - Check Claude Code usage
+
+For complete Task Master documentation, commands, workflows, and troubleshooting, see [docs/mcp/taskmaster.md](docs/mcp/taskmaster.md).

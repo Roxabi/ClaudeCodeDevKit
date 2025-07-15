@@ -1,6 +1,6 @@
 # Development Environment Template
 
-A standardized development container setup for team collaboration using Claude Code and VSCode.
+A comprehensive development environment template featuring standardized devcontainer setup, Vitest testing framework, Task Master AI integration, and security-focused configuration for team collaboration using Claude Code and VSCode.
 
 ## Quick Start
 
@@ -38,6 +38,8 @@ A standardized development container setup for team collaboration using Claude C
 
 ### ✅ Completed Setup
 
+- **Testing Framework**: Comprehensive Vitest test suite with unit, integration, and e2e tests
+- **Task Master AI**: Integrated project management with MCP tools
 - **Package.json**: Configured with development scripts and dependencies
 - **TypeScript**: Setup with proper compiler options
 - **ESLint & Prettier**: Configured for consistent code quality
@@ -49,9 +51,11 @@ A standardized development container setup for team collaboration using Claude C
 
 ### 🚀 Ready to Use Scripts
 
+- `npm test` - Run comprehensive test suite with Vitest
 - `npm run setup` - Install dependencies, format, and lint
 - `npm run format` - Code formatting with Prettier
 - `npm run lint` - ESLint code quality checks
+- `npm run type-check` - TypeScript type validation
 - `npm run docker:up/down` - Local services management
 - `npm run ccusage` - Claude Code usage monitoring
 
@@ -94,8 +98,11 @@ A standardized development container setup for team collaboration using Claude C
 # Development (placeholder - customize for your project)
 npm run dev          # Start development server
 npm run build        # Build for production
-npm run test         # Run tests
+
+# Testing (ready to use - Vitest framework)
+npm test             # Run all tests (unit, integration, e2e)
 npm run test:watch   # Run tests in watch mode
+npm run test:coverage # Run tests with coverage report
 
 # Code Quality (ready to use)
 npm run lint         # ESLint code quality checks
@@ -197,6 +204,52 @@ psql postgresql://devuser:devpass@localhost:5432/devdb
 sudo chown -R node:node /workspace
 ```
 
+## Task Master AI Integration
+
+This project includes Task Master AI for structured project management and development workflows.
+
+### Quick Commands
+
+```bash
+# Initialize Task Master (already done)
+task-master init
+
+# View next available task
+task-master next
+
+# Show specific task details
+task-master show <id>
+
+# Mark task as completed
+task-master set-status --id=<id> --status=done
+
+# Update task with implementation progress
+task-master update-subtask --id=<id.subtask> --prompt="Progress update"
+```
+
+### MCP Integration
+
+Task Master is available through MCP tools with the prefix `mcp__taskmaster-ai__*`. Configuration is in `.mcp.json` - add your API keys to the environment variables.
+
+📖 **Complete documentation**: See `docs/mcp/taskmaster.md` for detailed workflows, commands, and troubleshooting.
+
+## Testing Framework
+
+This project uses **Vitest** for comprehensive testing with three test categories:
+
+### Test Structure
+- **Unit Tests**: `tests/unit/` - Individual component testing
+- **Integration Tests**: `tests/integration/` - Component interaction testing  
+- **E2E Tests**: `tests/e2e/` - End-to-end scenario testing
+
+### Test Coverage
+- Devcontainer configuration validation
+- Docker environment setup verification
+- Service availability and connectivity testing
+- Port forwarding functionality
+- Development tools integration
+- Runtime environment verification
+
 ## Customization
 
 ### Adding New Tools
@@ -211,9 +264,9 @@ sudo chown -R node:node /workspace
 Pre-configured and ready to customize:
 
 - **Prettier**: `.prettierrc` with team-friendly defaults
-- **ESLint**: Package.json scripts for linting
+- **ESLint**: `eslint.config.js` with TypeScript support
 - **EditorConfig**: `.editorconfig` for consistent editor behavior
-- **TypeScript**: Ready for `tsconfig.json` setup
+- **TypeScript**: `tsconfig.json` with development-optimized settings
 
 ### Team-Specific Settings
 
